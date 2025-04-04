@@ -5,7 +5,7 @@ export const mockProducts = [
     title: "Elden Ring",
     description:
       "THE NEW FANTASY ACTION RPG. Rise, Tarnished, and be guided by grace to brandish the power of the Elden Ring and become an Elden Lord in the Lands Between.",
-    image: "/images/elden/elden.png",
+    image: "/images/elden/elden.jpg",
     price: 59.99,
     discount: 25,
     platform: "Steam",
@@ -17,11 +17,11 @@ export const mockProducts = [
     sales: 12000000,
     features: ["Open World", "Multiplayer", "Controller Support"],
     images: [
-      "/images/elden/elden.png",
-      "/images/elden/elden-desc1.png",
-      "/images/elden/elden-desc2.png",
-      "/images/elden/elden-desc3.png",
-      "/images/elden/elden-desc4.png",
+      "/images/elden/elden.jpg",
+      "/images/elden/elden-desc1.jpg",
+      "/images/elden/elden-desc2.jpg",
+      "/images/elden/elden-desc3.jpg",
+      "/images/elden/elden-desc4.jpg",
     ],
   },
   {
@@ -29,7 +29,7 @@ export const mockProducts = [
     title: "Cyberpunk 2077",
     description:
       "An open-world, action-adventure RPG set in Night City, a megalopolis obsessed with power, glamour and body modification.",
-    image: "/images/cyberpunk/cyberpunk.png",
+    image: "/images/cyberpunk/cyberpunk.jpg",
     price: 59.99,
     discount: 50,
     platform: "GOG",
@@ -41,7 +41,7 @@ export const mockProducts = [
     sales: 18000000,
     features: ["Open World", "Single-player", "Story Rich"],
     images: [
-      "/images/cyberpunk/cyberpunk.png",
+      "/images/cyberpunk/cyberpunk.jpg",
       "/images/cyberpunk/cyberpunk-desc1.jpg",
       "/images/cyberpunk/cyberpunk-desc2.jpg",
       "/images/cyberpunk/cyberpunk-desc3.jpg",
@@ -193,7 +193,7 @@ export const mockProducts = [
     id: "software-1",
     title: "Microsoft Office 2023",
     description: "The latest version of Microsoft Office with Word, Excel, PowerPoint, and more.",
-    image: "/images/software/microsoftoffice.png",
+    image: "/images/software/microsoftoffice.jpg",
     price: 149.99,
     discount: 20,
     platform: "Windows",
@@ -205,7 +205,7 @@ export const mockProducts = [
     sales: 8000000,
     features: ["Word Processing", "Spreadsheets", "Presentations"],
     images: [
-      "/images/software/microsoftoffice.png",
+      "/images/software/microsoftoffice.jpg",
       "/images/microsoftoffice-desc1.jpg",
       "/images/microsoftoffice-desc2.jpg",
       "/images/microsoftoffice-desc3.jpg",
@@ -627,7 +627,7 @@ export const mockProducts = [
     rating: 4.9,
     sales: 50000000,
     features: ["Instant Delivery", "No Expiration", "Global Usage"],
-    images: ["/images/subscription/amazon100.jpg", "/amazon100.png", "/amazon100.png", "/amazon100.png"],
+    images: ["/images/subscription/amazon100.jpg", "/amazon100.jpg", "/amazon100.jpg", "/amazon100.jpg"],
   },
 ]
 
@@ -709,7 +709,7 @@ export const mockPublishers = [
       {
         id: "game-2",
         title: "Cyberpunk 2077",
-        image: "/images/cyberpunk/cyberpunk.png",
+        image: "/images/cyberpunk/cyberpunk.jpg",
         discount: 50,
       },
       {
