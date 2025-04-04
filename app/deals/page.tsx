@@ -17,6 +17,7 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card, CardContent } from "@/components/ui/card"
 import { mockProducts } from "@/lib/mock-data"
+import { useToast } from "@/components/ui/use-toast"
 
 export default function DealsPage() {
   const [activeTab, setActiveTab] = useState("all")
@@ -31,6 +32,7 @@ export default function DealsPage() {
     genres: [],
     publishers: [],
   })
+  const { toast } = useToast()
 
   // Mock active sales data
   const activeSales = [
@@ -64,13 +66,13 @@ export default function DealsPage() {
   ]
 
   // Flash sales with countdown timers
-  const flashSales = [
+  const [flashSales, setFlashSales] = useState([
     {
       id: "flash-1",
       title: "Flash Deal: Cyberpunk 2077",
       endTime: new Date(Date.now() + 3600000 * 5).toISOString(), // 5 hours from now
       discount: 75,
-      image: "/placeholder.svg?height=200&width=200&text=Cyberpunk+2077",
+      image: "/images/cyberpunk.png",
       originalPrice: 59.99,
       currentPrice: 14.99,
     },
@@ -92,7 +94,7 @@ export default function DealsPage() {
       originalPrice: 52.99,
       currentPrice: 26.49,
     },
-  ]
+  ])
 
   // Handle search submission
   const handleSearch = (e) => {
@@ -100,12 +102,54 @@ export default function DealsPage() {
     filterProducts()
   }
 
+  const addToCart = (product) => {
+    try {
+      // Get existing cart
+      const existingCart = localStorage.getItem("zafago_cart")
+      const cart = existingCart ? JSON.parse(existingCart) : []
+
+      // Check if product already in cart
+      const existingItemIndex = cart.findIndex((item) => item.id === product.id)
+
+      if (existingItemIndex >= 0) {
+        // Update quantity if already in cart
+        cart[existingItemIndex].quantity += 1
+      } else {
+        // Add new item with quantity 1
+        cart.push({
+          ...product,
+          quantity: 1,
+        })
+      }
+
+      // Save to localStorage
+      localStorage.setItem("zafago_cart", JSON.stringify(cart))
+
+      // Trigger storage event for header to update cart count
+      window.dispatchEvent(new Event("storage"))
+
+      toast({
+        title: "Added to cart",
+        description: `${product.title} has been added to your cart.`,
+      })
+    } catch (error) {
+      console.error("Failed to add to cart", error)
+      toast({
+        title: "Error",
+        description: "Failed to add item to cart. Please try again.",
+        variant: "destructive",
+      })
+    }
+  }
+
   // Filter products based on active tab, search query, and filters
   const filterProducts = () => {
     setLoading(true)
 
     // Get products with discounts
-    const discountedProducts = mockProducts.filter((product) => product.discount > 0)
+    const discountedProducts = mockProducts
+      .filter((product) => product.discount > 0)
+      .sort((a, b) => b.discount - a.discount)
 
     // Apply filters
     const filteredProducts = discountedProducts.filter((product) => {
@@ -324,11 +368,27 @@ export default function DealsPage() {
                         </span>
                       </div>
                     </div>
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between gap-2">
                       <div className="text-xs text-muted-foreground">
                         <SaleCountdown endDate={sale.endTime} className="text-sale-red font-medium" showTitle={false} />
                       </div>
-                      <Button size="sm" className="bg-brand-500 hover:bg-brand-600">
+                      <Button
+                        size="sm"
+                        className="bg-brand-500 hover:bg-brand-600 whitespace-nowrap"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          const product = mockProducts.find((p) => p.title === sale.title.replace("Flash Deal: ", ""))
+                          if (product) {
+                            addToCart(product)
+                          } else {
+                            toast({
+                              title: "Error",
+                              description: "Product not found.",
+                              variant: "destructive",
+                            })
+                          }
+                        }}
+                      >
                         <ShoppingCart className="mr-1 h-4 w-4" />
                         Add to Cart
                       </Button>

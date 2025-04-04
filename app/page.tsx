@@ -1,176 +1,37 @@
+"use client"
+
 import Link from "next/link"
 import { ChevronRight } from "lucide-react"
+import Image from "next/image"
 
 import { Button } from "@/components/ui/button"
 import { HeroCarousel } from "@/components/hero-carousel"
 import { ProductGrid } from "@/components/product-grid"
 import { CategoryShowcase } from "@/components/category-showcase"
 import { NewsletterSignup } from "@/components/newsletter-signup"
-import { FeaturedPublishers } from "@/components/featured-publishers"
 import { TrendingGames } from "@/components/trending-games"
 import { UpcomingReleases } from "@/components/upcoming-releases"
-import { SaleCountdown } from "@/components/sale-countdown"
+import { Card, CardContent } from "@/components/ui/card"
+import { mockProducts, mockPublishers } from "@/lib/mock-data"
 
 export default function HomePage() {
-  // Featured products for the hero carousel
+  // Get featured products from the centralized data source
   const featuredProducts = [
-    {
-      id: "1",
-      title: "Elden Ring",
-      image: "/placeholder.svg?height=600&width=1200&text=Elden+Ring",
-      price: 59.99,
-      discount: 15,
-      platform: "Steam",
-      category: "games",
-      description:
-        "Embark on an epic adventure in a vast, seamless world filled with incredible challenges and discovery.",
-    },
-    {
-      id: "2",
-      title: "Cyberpunk 2077",
-      image: "/placeholder.svg?height=600&width=1200&text=Cyberpunk+2077",
-      price: 49.99,
-      discount: 30,
-      platform: "Epic Games",
-      category: "games",
-      description:
-        "Become a cyberpunk, an urban mercenary equipped with cybernetic enhancements in a dystopian future.",
-    },
-    {
-      id: "3",
-      title: "Microsoft Office 2023",
-      image: "/placeholder.svg?height=600&width=1200&text=Microsoft+Office+2023",
-      price: 149.99,
-      discount: 20,
-      platform: "Windows",
-      category: "software",
-      description: "Boost your productivity with the latest suite of Microsoft Office applications.",
-    },
-  ]
+    mockProducts.find((p) => p.id === "game-1"), // Elden Ring
+    mockProducts.find((p) => p.id === "game-2"), // Cyberpunk 2077
+    mockProducts.find((p) => p.id === "software-1"), // Microsoft Office
+  ].filter(Boolean)
 
-  // New releases section
-  const newReleases = [
-    {
-      id: "4",
-      title: "Starfield",
-      image: "/placeholder.svg?height=300&width=300&text=Starfield",
-      price: 69.99,
-      platform: "Steam",
-      category: "games",
-      releaseDate: "2023-09-06",
-      rating: 4.5,
-    },
-    {
-      id: "5",
-      title: "Diablo IV",
-      image: "/placeholder.svg?height=300&width=300&text=Diablo+IV",
-      price: 59.99,
-      platform: "Battle.net",
-      category: "games",
-      releaseDate: "2023-06-06",
-      rating: 4.7,
-    },
-    {
-      id: "6",
-      title: "Baldur's Gate 3",
-      image: "/placeholder.svg?height=300&width=300&text=Baldur's+Gate+3",
-      price: 59.99,
-      platform: "Steam",
-      category: "games",
-      releaseDate: "2023-08-03",
-      rating: 4.9,
-    },
-    {
-      id: "7",
-      title: "Hogwarts Legacy",
-      image: "/placeholder.svg?height=300&width=300&text=Hogwarts+Legacy",
-      price: 49.99,
-      platform: "Epic Games",
-      category: "games",
-      releaseDate: "2023-02-10",
-      rating: 4.6,
-    },
-  ]
+  // Get new releases from the centralized data source
+  const newReleases = mockProducts
+    .filter((p) => new Date(p.releaseDate) > new Date(Date.now() - 90 * 24 * 60 * 60 * 1000))
+    .slice(0, 4)
 
-  // Top selling section
-  const topSelling = [
-    {
-      id: "8",
-      title: "Grand Theft Auto V",
-      image: "/placeholder.svg?height=300&width=300&text=GTA+V",
-      price: 29.99,
-      platform: "Steam",
-      category: "games",
-      soldCount: 12500,
-      rating: 4.8,
-    },
-    {
-      id: "9",
-      title: "Minecraft",
-      image: "/placeholder.svg?height=300&width=300&text=Minecraft",
-      price: 26.99,
-      platform: "Java Edition",
-      category: "games",
-      soldCount: 10800,
-      rating: 4.9,
-    },
-    {
-      id: "10",
-      title: "FIFA 23",
-      image: "/placeholder.svg?height=300&width=300&text=FIFA+23",
-      price: 59.99,
-      platform: "Origin",
-      category: "games",
-      soldCount: 9200,
-      rating: 4.3,
-    },
-    {
-      id: "11",
-      title: "Red Dead Redemption 2",
-      image: "/placeholder.svg?height=300&width=300&text=RDR2",
-      price: 39.99,
-      platform: "Epic Games",
-      category: "games",
-      soldCount: 8700,
-      rating: 4.9,
-    },
-  ]
+  // Get top selling products from the centralized data source
+  const topSelling = mockProducts.sort((a, b) => (b.sales || 0) - (a.sales || 0)).slice(0, 4)
 
-  // Digital products section
-  const digitalProducts = [
-    {
-      id: "12",
-      title: "Steam Wallet $50",
-      image: "/placeholder.svg?height=300&width=300&text=Steam+Wallet",
-      price: 50.0,
-      platform: "Steam",
-      category: "wallet",
-    },
-    {
-      id: "13",
-      title: "PlayStation Store $25",
-      image: "/placeholder.svg?height=300&width=300&text=PS+Store",
-      price: 25.0,
-      platform: "PlayStation",
-      category: "wallet",
-    },
-    {
-      id: "14",
-      title: "Xbox Game Pass Ultimate (3 Months)",
-      image: "/placeholder.svg?height=300&width=300&text=Xbox+Game+Pass",
-      price: 44.99,
-      platform: "Xbox",
-      category: "subscription",
-    },
-    {
-      id: "15",
-      title: "Roblox 2200 Robux",
-      image: "/placeholder.svg?height=300&width=300&text=Roblox",
-      price: 24.99,
-      platform: "Roblox",
-      category: "currency",
-    },
-  ]
+  // Get digital products from the centralized data source
+  const digitalProducts = mockProducts.filter((p) => p.category === "digital").slice(0, 4)
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -179,19 +40,41 @@ export default function HomePage() {
         <HeroCarousel items={featuredProducts} />
       </section>
 
-      {/* Summer Sale Banner */}
-      <section className="py-6 bg-gradient-sale">
-        <div className="container">
-          <SaleCountdown
-            title="Summer Sale"
-            description="Huge discounts on top games! Limited time only."
-            endDate="2023-08-31"
-          />
+      {/* Summer Sale Banner - SMALLER VERSION */}
+      <section className="container mx-auto my-8">
+        <div className="relative overflow-hidden rounded-lg">
+          <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-5 md:p-6">
+            <div className="relative z-10 flex flex-col md:flex-row items-center justify-between">
+              <div className="mb-4 md:mb-0">
+                <div className="inline-block bg-white dark:bg-black px-3 py-1 rounded-full mb-2 animate-pulse">
+                  <span className="text-xs font-medium text-blue-600 dark:text-blue-400">Limited Time Offer</span>
+                </div>
+                <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">Summer Sale</h2>
+                <p className="text-sm md:text-base text-white/90 max-w-md">Up to 75% off on selected titles!</p>
+              </div>
+              <div className="flex gap-3">
+                <Button
+                  size="sm"
+                  asChild
+                  className="bg-white text-blue-600 hover:bg-blue-50 dark:bg-blue-900 dark:text-white dark:hover:bg-blue-800"
+                >
+                  <Link href="/products">Shop Now</Link>
+                </Button>
+                <Button size="sm" asChild className="bg-black/50 hover:bg-black/70 text-white border-2 border-white">
+                  <Link href="/deals">View Deals</Link>
+                </Button>
+              </div>
+            </div>
+
+            {/* Decorative elements */}
+            <div className="absolute top-1/2 right-0 transform -translate-y-1/2 w-32 h-32 bg-gradient-to-br from-pink-400 to-purple-500 rounded-full blur-3xl opacity-30"></div>
+            <div className="absolute bottom-0 left-1/4 w-20 h-20 bg-gradient-to-tr from-yellow-400 to-pink-500 rounded-full blur-3xl opacity-20"></div>
+          </div>
         </div>
       </section>
 
       {/* Categories Showcase */}
-      <section className="container py-12">
+      <section className="container py-8">
         <h2 className="text-3xl font-bold tracking-tight mb-8 text-center">
           <span className="bg-clip-text text-transparent bg-gradient-to-r from-brand-600 to-brand-400">
             Explore Categories
@@ -201,9 +84,9 @@ export default function HomePage() {
       </section>
 
       {/* Trending Games */}
-      <section className="py-12 bg-muted/50">
+      <section className="py-8 bg-muted/50">
         <div className="container">
-          <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold tracking-tight">Trending Now</h2>
             <Button variant="link" asChild className="group">
               <Link href="/products?sort=trending" className="flex items-center text-brand-600">
@@ -217,8 +100,8 @@ export default function HomePage() {
       </section>
 
       {/* New Releases */}
-      <section className="container py-12">
-        <div className="flex items-center justify-between mb-8">
+      <section className="container py-8">
+        <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold tracking-tight">New Releases</h2>
           <Button variant="link" asChild className="group">
             <Link href="/products?sort=newest" className="flex items-center text-brand-600">
@@ -231,24 +114,39 @@ export default function HomePage() {
       </section>
 
       {/* Featured Publishers */}
-      <section className="py-12 bg-gradient-to-b from-background to-muted/30">
+      <section className="py-8">
         <div className="container">
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-2xl font-bold tracking-tight">Featured Publishers</h2>
-            <Button variant="link" asChild className="group">
-              <Link href="/publishers" className="flex items-center text-brand-600">
-                View all publishers
-                <ChevronRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
-              </Link>
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold">Featured Publishers</h2>
+            <Button variant="link" size="sm" asChild>
+              <Link href="/publishers">View All</Link>
             </Button>
           </div>
-          <FeaturedPublishers />
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            {mockPublishers.slice(0, 6).map((publisher) => (
+              <Link key={publisher.id} href={`/publishers/${publisher.id}`}>
+                <Card className="overflow-hidden h-full transition-all hover:shadow-md">
+                  <CardContent className="p-4 flex flex-col items-center justify-center text-center h-full">
+                    <div className="relative w-16 h-16 mb-3">
+                      <Image
+                        src={publisher.logo || `/placeholder.svg?height=64&width=64&text=${publisher.name[0]}`}
+                        alt={publisher.name}
+                        fill
+                        className="object-contain"
+                      />
+                    </div>
+                    <h3 className="font-medium text-sm">{publisher.name}</h3>
+                  </CardContent>
+                </Card>
+              </Link>
+            ))}
+          </div>
         </div>
       </section>
 
       {/* Top Selling */}
-      <section className="container py-12">
-        <div className="flex items-center justify-between mb-8">
+      <section className="container py-8">
+        <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold tracking-tight">Top Selling</h2>
           <Button variant="link" asChild className="group">
             <Link href="/products?sort=bestselling" className="flex items-center text-brand-600">
@@ -261,9 +159,9 @@ export default function HomePage() {
       </section>
 
       {/* Upcoming Releases */}
-      <section className="py-12 bg-muted/50">
+      <section className="py-8 bg-muted/50">
         <div className="container">
-          <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold tracking-tight">Upcoming Releases</h2>
             <Button variant="link" asChild className="group">
               <Link href="/products?filter=upcoming" className="flex items-center text-brand-600">
@@ -277,8 +175,8 @@ export default function HomePage() {
       </section>
 
       {/* Digital Products */}
-      <section className="container py-12">
-        <div className="flex items-center justify-between mb-8">
+      <section className="container py-8">
+        <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold tracking-tight">Digital Products</h2>
           <Button variant="link" asChild className="group">
             <Link href="/products?category=digital" className="flex items-center text-brand-600">
@@ -291,7 +189,7 @@ export default function HomePage() {
       </section>
 
       {/* Newsletter Signup */}
-      <section className="py-12 bg-gradient-to-r from-brand-600 to-brand-500 text-white">
+      <section className="py-8 bg-gradient-to-r from-brand-600 to-brand-500 text-white">
         <div className="container">
           <NewsletterSignup />
         </div>

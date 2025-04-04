@@ -51,15 +51,15 @@ export default function CheckoutPage() {
     },
   ]
 
-  // Calculate totals
-  const calculateItemTotal = (item) => {
-    const discountedPrice = item.discount ? item.price - (item.price * item.discount) / 100 : item.price
-    return discountedPrice * item.quantity
-  }
+  // Calculate order summary
+  const subtotal = cartItems.reduce((total, item) => {
+    const itemPrice = item.discount ? item.price - (item.price * item.discount) / 100 : item.price
+    return total + itemPrice * item.quantity
+  }, 0)
 
-  const subtotal = cartItems.reduce((sum, item) => sum + calculateItemTotal(item), 0)
-  const discount = 0 // No coupon in this example
-  const total = subtotal - discount
+  const shipping = subtotal > 0 ? 4.99 : 0
+  const tax = subtotal * 0.08 // 8% tax
+  const total = subtotal + shipping + tax
 
   return (
     <div className="container py-8">
@@ -344,17 +344,22 @@ export default function CheckoutPage() {
                 <Separator className="my-4" />
 
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <span className="text-muted-foreground">Subtotal</span>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">
+                      Items ({cartItems.reduce((count, item) => count + item.quantity, 0)})
+                    </span>
                     <span>${subtotal.toFixed(2)}</span>
                   </div>
 
-                  {discount > 0 && (
-                    <div className="flex items-center justify-between text-green-500">
-                      <span>Discount</span>
-                      <span>-${discount.toFixed(2)}</span>
-                    </div>
-                  )}
+                  <div className="flex items-center justify-between">
+                    <span className="text-muted-foreground">Shipping</span>
+                    <span>${shipping.toFixed(2)}</span>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <span className="text-muted-foreground">Tax</span>
+                    <span>${tax.toFixed(2)}</span>
+                  </div>
 
                   <Separator />
                   <div className="flex items-center justify-between font-medium text-lg">

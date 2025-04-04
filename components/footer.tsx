@@ -1,176 +1,239 @@
 import Link from "next/link"
 import Image from "next/image"
-import { Facebook, Twitter, Instagram, Youtube, Mail, ArrowRight } from "lucide-react"
-
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { Facebook, Twitter, Instagram, Youtube, Github } from "lucide-react"
 
 export function Footer() {
   return (
-    <footer className="border-t bg-background">
-      <div className="container px-4 py-12 md:px-6">
-        {/* Newsletter Section */}
-        <div className="mb-12 p-6 rounded-xl bg-gradient-to-r from-brand-600/10 to-brand-400/10 border border-brand-500/20">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="text-center md:text-left">
-              <h3 className="text-xl font-bold mb-2">Stay Updated</h3>
-              <p className="text-muted-foreground max-w-md">
-                Subscribe to our newsletter for exclusive deals, new releases, and gaming news.
-              </p>
-            </div>
-            <div className="flex w-full max-w-md">
-              <div className="relative flex-1">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input type="email" placeholder="Enter your email" className="pl-10 rounded-r-none border-r-0" />
-              </div>
-              <Button className="rounded-l-none">
-                Subscribe
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        </div>
-
+    <footer className="bg-background border-t">
+      <div className="container py-10">
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5">
           <div className="space-y-4">
             <Link href="/" className="flex items-center space-x-2">
-              <Image
-                src="/placeholder.svg?height=32&width=32&text=Z"
-                alt="Zafago"
-                width={32}
-                height={32}
-                className="rounded bg-gradient-to-br from-brand-500 to-brand-600 text-white"
-              />
-              <span className="font-bold">Zafago</span>
+              <div className="relative h-8 w-8 overflow-hidden">
+                <Image
+                  src="/placeholder.svg?height=32&width=32&text=Z"
+                  alt="Zafago"
+                  width={32}
+                  height={32}
+                  className="rounded bg-gradient-to-br from-brand-500 to-brand-600 text-white"
+                />
+              </div>
+              <span className="font-bold bg-clip-text text-transparent bg-gradient-to-r from-brand-600 to-brand-400">
+                Zafago
+              </span>
             </Link>
             <p className="text-sm text-muted-foreground">
-              Your one-stop shop for digital games, software, and more. Get instant delivery of activation codes.
+              Your one-stop shop for digital games, software, and gift cards at the best prices.
             </p>
-            <div className="flex gap-4">
-              <Link href="#" className="text-muted-foreground hover:text-brand-500 transition-colors">
+            <div className="flex space-x-4">
+              <Link href="#" className="text-muted-foreground hover:text-foreground">
                 <Facebook className="h-5 w-5" />
                 <span className="sr-only">Facebook</span>
               </Link>
-              <Link href="#" className="text-muted-foreground hover:text-brand-500 transition-colors">
+              <Link href="#" className="text-muted-foreground hover:text-foreground">
                 <Twitter className="h-5 w-5" />
                 <span className="sr-only">Twitter</span>
               </Link>
-              <Link href="#" className="text-muted-foreground hover:text-brand-500 transition-colors">
+              <Link href="#" className="text-muted-foreground hover:text-foreground">
                 <Instagram className="h-5 w-5" />
                 <span className="sr-only">Instagram</span>
               </Link>
-              <Link href="#" className="text-muted-foreground hover:text-brand-500 transition-colors">
+              <Link href="#" className="text-muted-foreground hover:text-foreground">
                 <Youtube className="h-5 w-5" />
                 <span className="sr-only">YouTube</span>
+              </Link>
+              <Link href="#" className="text-muted-foreground hover:text-foreground">
+                <Github className="h-5 w-5" />
+                <span className="sr-only">GitHub</span>
               </Link>
             </div>
           </div>
           <div className="space-y-4">
             <h3 className="text-sm font-medium">Products</h3>
-            <nav className="flex flex-col space-y-2">
-              <Link
-                href="/products?category=games"
-                className="text-sm text-muted-foreground hover:text-brand-500 transition-colors"
-              >
-                Games
-              </Link>
-              <Link
-                href="/products?category=software"
-                className="text-sm text-muted-foreground hover:text-brand-500 transition-colors"
-              >
-                Software
-              </Link>
-              <Link
-                href="/products?category=wallet"
-                className="text-sm text-muted-foreground hover:text-brand-500 transition-colors"
-              >
-                Gift Cards
-              </Link>
-              <Link
-                href="/products?category=subscription"
-                className="text-sm text-muted-foreground hover:text-brand-500 transition-colors"
-              >
-                Subscriptions
-              </Link>
-              <Link
-                href="/products?category=currency"
-                className="text-sm text-muted-foreground hover:text-brand-500 transition-colors"
-              >
-                In-game Currency
-              </Link>
-            </nav>
+            <ul className="space-y-2 text-sm">
+              <li>
+                <Link href="/products?category=games" className="text-muted-foreground hover:text-foreground">
+                  Games
+                </Link>
+              </li>
+              <li>
+                <Link href="/products?category=software" className="text-muted-foreground hover:text-foreground">
+                  Software
+                </Link>
+              </li>
+              <li>
+                <Link href="/products?category=digital" className="text-muted-foreground hover:text-foreground">
+                  Gift Cards
+                </Link>
+              </li>
+              <li>
+                <Link href="/deals" className="text-muted-foreground hover:text-foreground">
+                  Deals
+                </Link>
+              </li>
+              <li>
+                <Link href="/new-releases" className="text-muted-foreground hover:text-foreground">
+                  New Releases
+                </Link>
+              </li>
+              <li>
+                <Link href="/coming-soon" className="text-muted-foreground hover:text-foreground">
+                  Coming Soon
+                </Link>
+              </li>
+            </ul>
+          </div>
+          <div className="space-y-4">
+            <h3 className="text-sm font-medium">Platforms</h3>
+            <ul className="space-y-2 text-sm">
+              <li>
+                <Link href="/platforms/steam" className="text-muted-foreground hover:text-foreground">
+                  Steam
+                </Link>
+              </li>
+              <li>
+                <Link href="/platforms/epic" className="text-muted-foreground hover:text-foreground">
+                  Epic Games
+                </Link>
+              </li>
+              <li>
+                <Link href="/platforms/origin" className="text-muted-foreground hover:text-foreground">
+                  Origin
+                </Link>
+              </li>
+              <li>
+                <Link href="/platforms/uplay" className="text-muted-foreground hover:text-foreground">
+                  Uplay
+                </Link>
+              </li>
+              <li>
+                <Link href="/platforms/gog" className="text-muted-foreground hover:text-foreground">
+                  GOG
+                </Link>
+              </li>
+              <li>
+                <Link href="/platforms/xbox" className="text-muted-foreground hover:text-foreground">
+                  Xbox
+                </Link>
+              </li>
+              <li>
+                <Link href="/platforms/playstation" className="text-muted-foreground hover:text-foreground">
+                  PlayStation
+                </Link>
+              </li>
+            </ul>
           </div>
           <div className="space-y-4">
             <h3 className="text-sm font-medium">Company</h3>
-            <nav className="flex flex-col space-y-2">
-              <Link href="/about" className="text-sm text-muted-foreground hover:text-brand-500 transition-colors">
-                About Us
-              </Link>
-              <Link href="/careers" className="text-sm text-muted-foreground hover:text-brand-500 transition-colors">
-                Careers
-              </Link>
-              <Link href="/blog" className="text-sm text-muted-foreground hover:text-brand-500 transition-colors">
-                Blog
-              </Link>
-              <Link href="/press" className="text-sm text-muted-foreground hover:text-brand-500 transition-colors">
-                Press
-              </Link>
-              <Link href="/publishers" className="text-sm text-muted-foreground hover:text-brand-500 transition-colors">
-                Publishers
-              </Link>
-            </nav>
+            <ul className="space-y-2 text-sm">
+              <li>
+                <Link href="/about" className="text-muted-foreground hover:text-foreground">
+                  About Us
+                </Link>
+              </li>
+              <li>
+                <Link href="/careers" className="text-muted-foreground hover:text-foreground">
+                  Careers
+                </Link>
+              </li>
+              <li>
+                <Link href="/blog" className="text-muted-foreground hover:text-foreground">
+                  Blog
+                </Link>
+              </li>
+              <li>
+                <Link href="/press" className="text-muted-foreground hover:text-foreground">
+                  Press
+                </Link>
+              </li>
+              <li>
+                <Link href="/contact" className="text-muted-foreground hover:text-foreground">
+                  Contact
+                </Link>
+              </li>
+            </ul>
           </div>
           <div className="space-y-4">
             <h3 className="text-sm font-medium">Support</h3>
-            <nav className="flex flex-col space-y-2">
-              <Link href="/help" className="text-sm text-muted-foreground hover:text-brand-500 transition-colors">
-                Help Center
-              </Link>
-              <Link href="/contact" className="text-sm text-muted-foreground hover:text-brand-500 transition-colors">
-                Contact Us
-              </Link>
-              <Link href="/faq" className="text-sm text-muted-foreground hover:text-brand-500 transition-colors">
-                FAQs
-              </Link>
-              <Link href="/redeem" className="text-sm text-muted-foreground hover:text-brand-500 transition-colors">
-                How to Redeem
-              </Link>
-              <Link href="/refund" className="text-sm text-muted-foreground hover:text-brand-500 transition-colors">
-                Refund Policy
-              </Link>
-            </nav>
-          </div>
-          <div className="space-y-4">
-            <h3 className="text-sm font-medium">Legal</h3>
-            <nav className="flex flex-col space-y-2">
-              <Link href="/terms" className="text-sm text-muted-foreground hover:text-brand-500 transition-colors">
-                Terms of Service
-              </Link>
-              <Link href="/privacy" className="text-sm text-muted-foreground hover:text-brand-500 transition-colors">
-                Privacy Policy
-              </Link>
-              <Link href="/cookies" className="text-sm text-muted-foreground hover:text-brand-500 transition-colors">
-                Cookies Policy
-              </Link>
-              <Link href="/licenses" className="text-sm text-muted-foreground hover:text-brand-500 transition-colors">
-                Licenses
-              </Link>
-              <Link href="/security" className="text-sm text-muted-foreground hover:text-brand-500 transition-colors">
-                Security
-              </Link>
-            </nav>
+            <ul className="space-y-2 text-sm">
+              <li>
+                <Link href="/help" className="text-muted-foreground hover:text-foreground">
+                  Help Center
+                </Link>
+              </li>
+              <li>
+                <Link href="/faq" className="text-muted-foreground hover:text-foreground">
+                  FAQ
+                </Link>
+              </li>
+              <li>
+                <Link href="/returns" className="text-muted-foreground hover:text-foreground">
+                  Returns
+                </Link>
+              </li>
+              <li>
+                <Link href="/shipping" className="text-muted-foreground hover:text-foreground">
+                  Shipping
+                </Link>
+              </li>
+              <li>
+                <Link href="/terms" className="text-muted-foreground hover:text-foreground">
+                  Terms of Service
+                </Link>
+              </li>
+              <li>
+                <Link href="/privacy" className="text-muted-foreground hover:text-foreground">
+                  Privacy Policy
+                </Link>
+              </li>
+            </ul>
           </div>
         </div>
-        <div className="mt-8 border-t pt-8">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-10 border-t pt-6">
+          <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
             <p className="text-xs text-muted-foreground">
               &copy; {new Date().getFullYear()} Zafago. All rights reserved.
             </p>
-            <div className="flex items-center gap-2">
-              <Image src="/placeholder.svg?height=30&width=40&text=Visa" alt="Visa" width={40} height={30} />
-              <Image src="/placeholder.svg?height=30&width=40&text=MC" alt="Mastercard" width={40} height={30} />
-              <Image src="/placeholder.svg?height=30&width=40&text=PayPal" alt="PayPal" width={40} height={30} />
-              <Image src="/placeholder.svg?height=30&width=40&text=BTC" alt="Bitcoin" width={40} height={30} />
+            <div className="flex items-center space-x-4">
+              <Link href="/terms" className="text-xs text-muted-foreground hover:text-foreground">
+                Terms
+              </Link>
+              <Link href="/privacy" className="text-xs text-muted-foreground hover:text-foreground">
+                Privacy
+              </Link>
+              <Link href="/cookies" className="text-xs text-muted-foreground hover:text-foreground">
+                Cookies
+              </Link>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Image
+                src="/placeholder.svg?height=32&width=32&text=VISA"
+                alt="Visa"
+                width={32}
+                height={20}
+                className="h-5 w-auto"
+              />
+              <Image
+                src="/placeholder.svg?height=32&width=32&text=MC"
+                alt="Mastercard"
+                width={32}
+                height={20}
+                className="h-5 w-auto"
+              />
+              <Image
+                src="/placeholder.svg?height=32&width=32&text=AMEX"
+                alt="American Express"
+                width={32}
+                height={20}
+                className="h-5 w-auto"
+              />
+              <Image
+                src="/placeholder.svg?height=32&width=32&text=PP"
+                alt="PayPal"
+                width={32}
+                height={20}
+                className="h-5 w-auto"
+              />
             </div>
           </div>
         </div>
