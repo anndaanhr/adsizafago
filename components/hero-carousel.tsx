@@ -1,14 +1,14 @@
-"use client"
+"\"use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { ChevronLeft, ChevronRight, ShoppingCart } from "lucide-react"
+import { ChevronLeft, ChevronRight } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 
-interface HeroCarouselProps {
+interface CarouselProps {
   items: {
     id: string
     title: string
@@ -17,66 +17,34 @@ interface HeroCarouselProps {
     discount?: number
     platform: string
     category: string
-    description?: string
   }[]
 }
 
-export function HeroCarousel({ items }: HeroCarouselProps) {
+export function HeroCarousel({ items }: CarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isAutoPlaying, setIsAutoPlaying] = useState(true)
-  const [isTransitioning, setIsTransitioning] = useState(false)
-  const autoPlayRef = useRef<NodeJS.Timeout | null>(null)
 
   // Auto-play functionality
   useEffect(() => {
     if (!isAutoPlaying) return
 
-    const startAutoPlay = () => {
-      autoPlayRef.current = setTimeout(() => {
-        setIsTransitioning(true)
-        setCurrentIndex((prevIndex) => (prevIndex + 1) % items.length)
-      }, 5000)
-    }
+    const interval = setInterval(() => {
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % items.length)
+    }, 5000)
 
-    startAutoPlay()
-
-    return () => {
-      if (autoPlayRef.current) {
-        clearTimeout(autoPlayRef.current)
-      }
-    }
-  }, [isAutoPlaying, currentIndex, items.length])
-
-  // Handle transition end
-  useEffect(() => {
-    if (isTransitioning) {
-      const timer = setTimeout(() => {
-        setIsTransitioning(false)
-      }, 500)
-      return () => clearTimeout(timer)
-    }
-  }, [isTransitioning])
+    return () => clearInterval(interval)
+  }, [isAutoPlaying, items.length])
 
   // Pause auto-play on hover
   const handleMouseEnter = () => setIsAutoPlaying(false)
   const handleMouseLeave = () => setIsAutoPlaying(true)
 
   const goToPrevious = () => {
-    if (isTransitioning) return
-    setIsTransitioning(true)
     setCurrentIndex((prevIndex) => (prevIndex - 1 + items.length) % items.length)
   }
 
   const goToNext = () => {
-    if (isTransitioning) return
-    setIsTransitioning(true)
     setCurrentIndex((prevIndex) => (prevIndex + 1) % items.length)
-  }
-
-  const goToSlide = (index: number) => {
-    if (isTransitioning || index === currentIndex) return
-    setIsTransitioning(true)
-    setCurrentIndex(index)
   }
 
   const currentItem = items[currentIndex]
@@ -91,24 +59,18 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
           src={currentItem.image || "/placeholder.svg"}
           alt={currentItem.title}
           fill
-          className={`object-cover transition-opacity duration-500 ${isTransitioning ? "opacity-80" : "opacity-100"}`}
+          className="object-cover"
           priority
         />
-        <div className="hero-overlay" />
+        <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-background/50 to-background/30 dark:from-background/90 dark:via-background/60 dark:to-background/40" />
 
         <div className="absolute inset-0 flex items-center">
           <div className="container px-4 md:px-6">
-            <div
-              className={`grid gap-4 md:gap-6 max-w-md transition-all duration-500 ${
-                isTransitioning ? "opacity-0 translate-y-4" : "opacity-100 translate-y-0"
-              }`}
-            >
+            <div className="grid gap-4 md:gap-6 max-w-md">
               <div className="space-y-2">
-                <Badge className="inline-block bg-brand-500 hover:bg-brand-600">{currentItem.platform}</Badge>
+                <Badge className="inline-block">{currentItem.platform}</Badge>
                 <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">{currentItem.title}</h1>
-                <p className="text-muted-foreground md:text-xl">
-                  {currentItem.description || "Get your digital code instantly after purchase."}
-                </p>
+                <p className="text-muted-foreground md:text-xl">Get your digital code instantly after purchase.</p>
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-3xl font-bold">${discountedPrice}</span>
@@ -122,18 +84,10 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
                 )}
               </div>
               <div className="flex flex-col gap-2 min-[400px]:flex-row">
-                <Button size="lg" className="bg-brand-500 hover:bg-brand-600 hover-glow" asChild>
-                  <Link href={`/products/${currentItem.id}`}>
-                    <ShoppingCart className="mr-2 h-4 w-4" />
-                    Buy Now
-                  </Link>
+                <Button size="lg" asChild>
+                  <Link href={`/products/${currentItem.id}`}>Buy Now</Link>
                 </Button>
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="border-brand-500 text-brand-500 hover:bg-brand-500/10"
-                  asChild
-                >
+                <Button size="lg" variant="outline" asChild>
                   <Link href={`/products?category=${currentItem.category}`}>View More</Link>
                 </Button>
               </div>
@@ -146,7 +100,7 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
       <Button
         variant="ghost"
         size="icon"
-        className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-background/50 hover:bg-background/80 transition-all hover:scale-110"
+        className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-background/50 hover:bg-background/80"
         onClick={goToPrevious}
       >
         <ChevronLeft className="h-6 w-6" />
@@ -155,7 +109,7 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
       <Button
         variant="ghost"
         size="icon"
-        className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-background/50 hover:bg-background/80 transition-all hover:scale-110"
+        className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-background/50 hover:bg-background/80"
         onClick={goToNext}
       >
         <ChevronRight className="h-6 w-6" />
@@ -167,10 +121,8 @@ export function HeroCarousel({ items }: HeroCarouselProps) {
         {items.map((_, index) => (
           <button
             key={index}
-            className={`h-2 w-2 rounded-full transition-all ${
-              index === currentIndex ? "bg-brand-500 w-6" : "bg-background/50 hover:bg-background/80"
-            }`}
-            onClick={() => goToSlide(index)}
+            className={`h-2 w-2 rounded-full ${index === currentIndex ? "bg-primary" : "bg-primary/30"}`}
+            onClick={() => setCurrentIndex(index)}
           >
             <span className="sr-only">Go to slide {index + 1}</span>
           </button>

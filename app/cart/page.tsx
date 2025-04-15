@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { Trash2, Plus, Minus, ShoppingCart, ArrowRight } from "lucide-react"
@@ -14,57 +14,95 @@ import { useToast } from "@/components/ui/use-toast"
 
 export default function CartPage() {
   const { toast } = useToast()
-  const [cartItems, setCartItems] = useState([
-    {
-      id: "1",
-      title: "Elden Ring",
-      image: "/placeholder.svg?height=100&width=100&text=Elden+Ring",
-      price: 59.99,
-      discount: 15,
-      platform: "Steam",
-      quantity: 1,
-    },
-    {
-      id: "2",
-      title: "Microsoft Office 2023",
-      image: "/placeholder.svg?height=100&width=100&text=Office+2023",
-      price: 149.99,
-      discount: 20,
-      platform: "Windows",
-      quantity: 1,
-    },
-    {
-      id: "3",
-      title: "Steam Wallet $50",
-      image: "/placeholder.svg?height=100&width=100&text=Steam+Wallet",
-      price: 50.0,
-      discount: 0,
-      platform: "Steam",
-      quantity: 1,
-    },
-  ])
+  const [cartItems, setCartItems] = useState([])
   const [couponCode, setCouponCode] = useState("")
   const [couponApplied, setCouponApplied] = useState(false)
   const [couponDiscount, setCouponDiscount] = useState(0)
+  const [isLoading, setIsLoading] = useState(true)
 
-  const updateQuantity = (id, newQuantity) => {
-    if (newQuantity < 1) return
+  // Load cart items from localStorage
+  useEffect(() => {
+    const loadCart = () => {
+      try {
+        const storedCart = localStorage.getItem("zafago_cart")
+        if (storedCart) {
+          const parsedCart = JSON.parse(storedCart)
+          setCartItems(parsedCart)
+        }
+      } catch (error) {
+        console.error("Failed to parse cart", error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
 
-    setCartItems((prev) => prev.map((item) => (item.id === id ? { ...item, quantity: newQuantity } : item)))
+    loadCart()
+  }, [])
+
+  // Save cart to localStorage whenever it changes
+  useEffect(() => {
+    if (!isLoading) {
+      localStorage.setItem("zafago_cart", JSON.stringify(cartItems))
+    }
+  }, [cartItems, isLoading])
+
+  const updateQuantity = (itemId, newQuantity) => {
+    try {
+      // If quantity is less than 1, remove the item
+      if (newQuantity < 1) {
+        removeItem(itemId)
+        return
+      }
+
+      const updatedCart = cartItems.map((item) => (item.id === itemId ? { ...item, quantity: newQuantity } : item))
+
+      setCartItems(updatedCart)
+      localStorage.setItem("zafago_cart", JSON.stringify(updatedCart))
+
+      // Trigger storage event for header to update cart count
+      window.dispatchEvent(new Event("storage"))
+    } catch (error) {
+      console.error("Failed to update quantity", error)
+      toast({
+        title: "Error",
+        description: "Failed to update quantity. Please try again.",
+        variant: "destructive",
+      })
+    }
   }
 
-  const removeItem = (id) => {
-    setCartItems((prev) => prev.filter((item) => item.id !== id))
-    toast({
-      title: "Item removed",
-      description: "The item has been removed from your cart.",
-    })
+  const removeItem = (itemId) => {
+    try {
+      const updatedCart = cartItems.filter((item) => item.id !== itemId)
+      setCartItems(updatedCart)
+      localStorage.setItem("zafago_cart", JSON.stringify(updatedCart))
+
+      // Trigger storage event for header to update cart count
+      window.dispatchEvent(new Event("storage"))
+
+      toast({
+        title: "Item removed",
+        description: "The item has been removed from your cart.",
+      })
+    } catch (error) {
+      console.error("Failed to remove item from cart", error)
+      toast({
+        title: "Error",
+        description: "Failed to remove item from cart. Please try again.",
+        variant: "destructive",
+      })
+    }
   }
 
   const clearCart = () => {
     setCartItems([])
     setCouponApplied(false)
     setCouponDiscount(0)
+    localStorage.setItem("zafago_cart", JSON.stringify([]))
+
+    // Trigger storage event for header to update cart count
+    window.dispatchEvent(new Event("storage"))
+
     toast({
       title: "Cart cleared",
       description: "All items have been removed from your cart.",
@@ -97,6 +135,17 @@ export default function CartPage() {
   const subtotal = cartItems.reduce((sum, item) => sum + calculateItemTotal(item), 0)
   const discount = couponApplied ? subtotal * (couponDiscount / 100) : 0
   const total = subtotal - discount
+
+  if (isLoading) {
+    return (
+      <div className="container py-8">
+        <h1 className="text-3xl font-bold mb-6">Your Cart</h1>
+        <div className="flex justify-center items-center py-12">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="container py-8">
@@ -136,7 +185,10 @@ export default function CartPage() {
                         <div className="col-span-6 flex items-center gap-4">
                           <div className="relative h-20 w-20 rounded-md overflow-hidden flex-shrink-0">
                             <Image
-                              src={item.image || "/placeholder.svg"}
+                              src={
+                                item.image ||
+                                `/placeholder.svg?height=80&width=80&text=${encodeURIComponent(item.title)}`
+                              }
                               alt={item.title}
                               fill
                               className="object-cover"
@@ -234,7 +286,9 @@ export default function CartPage() {
                 <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <span className="text-muted-foreground">Subtotal</span>
+                    <span className="text-muted-foreground">
+                      Items ({cartItems.reduce((total, item) => total + item.quantity, 0)})
+                    </span>
                     <span>${subtotal.toFixed(2)}</span>
                   </div>
 
