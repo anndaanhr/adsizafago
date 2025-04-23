@@ -46,7 +46,7 @@ export default function RegisterPage() {
       const userData = {
         firstName,
         lastName,
-        email,
+        email ,
         password,
         newsletter,
       }
