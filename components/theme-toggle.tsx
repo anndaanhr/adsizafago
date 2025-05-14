@@ -40,4 +40,3 @@ export function ThemeToggle() {
     </DropdownMenu>
   )
 }
-

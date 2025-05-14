@@ -17,6 +17,7 @@ const AuthContext = createContext({
   isLoginModalOpen: false,
   loginError: "",
   registerError: "",
+  syncUserData: () => {},
 })
 
 export function AuthProvider({ children }) {
@@ -62,12 +63,79 @@ export function AuthProvider({ children }) {
       const foundUser = users.find((u) => u.email.toLowerCase() === email.toLowerCase() && u.password === password)
 
       if (foundUser) {
+        // Always get the most up-to-date user data from the users array
         // Create a copy without the password
         const userWithoutPassword = { ...foundUser }
         delete userWithoutPassword.password
 
+        // Ensure all user data is properly loaded
+        // Merge cart items if there are any in localStorage
+        try {
+          const storedCart = localStorage.getItem("zafago_cart")
+          if (storedCart) {
+            const parsedCart = JSON.parse(storedCart)
+            if (parsedCart.length > 0) {
+              // If user has cart items in their profile, merge them
+              if (userWithoutPassword.cart && userWithoutPassword.cart.length > 0) {
+                // Create a map of existing items by ID
+                const cartMap = new Map(userWithoutPassword.cart.map((item) => [item.id, item]))
+
+                // Add or update items from localStorage
+                parsedCart.forEach((item) => {
+                  if (cartMap.has(item.id)) {
+                    // Update quantity if item exists
+                    const existingItem = cartMap.get(item.id)
+                    existingItem.quantity += item.quantity
+                  } else {
+                    // Add new item
+                    cartMap.set(item.id, item)
+                  }
+                })
+
+                // Convert map back to array
+                userWithoutPassword.cart = Array.from(cartMap.values())
+              } else {
+                // If user has no cart, use the localStorage cart
+                userWithoutPassword.cart = parsedCart
+              }
+
+              // Update the cart in localStorage
+              localStorage.setItem("zafago_cart", JSON.stringify(userWithoutPassword.cart))
+
+              // Also update the user in the users array
+              const userIndex = users.findIndex((u) => u.id === foundUser.id)
+              if (userIndex !== -1) {
+                users[userIndex].cart = [...userWithoutPassword.cart]
+                localStorage.setItem("zafago_users", JSON.stringify(users))
+              }
+            }
+          }
+        } catch (error) {
+          console.error("Failed to merge cart data", error)
+        }
+
+        // Make sure wishlist is properly loaded
+        if (!userWithoutPassword.wishlist) {
+          userWithoutPassword.wishlist = []
+        }
+
+        // Make sure orders are properly loaded
+        if (!userWithoutPassword.orders) {
+          userWithoutPassword.orders = []
+        }
+
+        // Make sure settings are properly loaded
+        if (!userWithoutPassword.settings) {
+          userWithoutPassword.settings = {
+            notifications: true,
+            newsletter: false,
+            darkMode: false,
+          }
+        }
+
         setUser(userWithoutPassword)
         localStorage.setItem("zafago_user", JSON.stringify(userWithoutPassword))
+
         setIsLoginModalOpen(false)
         toast({
           title: "Login successful",
@@ -172,12 +240,43 @@ export function AuthProvider({ children }) {
   }
 
   const logout = () => {
+    // Before logging out, save the current user's data to the users array
+    if (user) {
+      try {
+        const storedUsers = localStorage.getItem("zafago_users")
+        if (storedUsers) {
+          const users = JSON.parse(storedUsers)
+          const userIndex = users.findIndex((u) => u.id === user.id)
+
+          if (userIndex !== -1) {
+            // Preserve the password from the original user
+            const originalPassword = users[userIndex].password
+
+            // Update user data but keep the password
+            users[userIndex] = {
+              ...user,
+              password: originalPassword,
+            }
+
+            localStorage.setItem("zafago_users", JSON.stringify(users))
+
+            // Also save the cart to localStorage for guest access
+            if (user.cart && user.cart.length > 0) {
+              localStorage.setItem("zafago_cart", JSON.stringify(user.cart))
+            }
+          }
+        }
+      } catch (error) {
+        console.error("Failed to save user data before logout", error)
+      }
+    }
+
     setUser(null)
     localStorage.removeItem("zafago_user")
     router.push("/")
     toast({
       title: "Logged out",
-      description: "You have been successfully logged out.",
+      description: "You have been successfully logged out. Your data has been saved.",
     })
   }
 
@@ -189,6 +288,42 @@ export function AuthProvider({ children }) {
   const closeLoginModal = () => {
     setIsLoginModalOpen(false)
     setLoginMessage("")
+  }
+
+  const syncUserData = () => {
+    if (!user) return
+
+    try {
+      // Get the latest users array
+      const storedUsers = localStorage.getItem("zafago_users")
+      if (storedUsers) {
+        const users = JSON.parse(storedUsers)
+        const userIndex = users.findIndex((u) => u.id === user.id)
+
+        if (userIndex !== -1) {
+          // Preserve the password
+          const originalPassword = users[userIndex].password
+
+          // Update user data in the users array
+          users[userIndex] = {
+            ...user,
+            password: originalPassword,
+          }
+
+          localStorage.setItem("zafago_users", JSON.stringify(users))
+
+          // Update the current user in localStorage
+          localStorage.setItem("zafago_user", JSON.stringify(user))
+
+          // If user has a cart, update the cart in localStorage
+          if (user.cart && user.cart.length > 0) {
+            localStorage.setItem("zafago_cart", JSON.stringify(user.cart))
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Failed to sync user data", error)
+    }
   }
 
   return (
@@ -203,6 +338,7 @@ export function AuthProvider({ children }) {
         isLoginModalOpen,
         loginError,
         registerError,
+        syncUserData,
       }}
     >
       {children}
@@ -233,4 +369,3 @@ export function AuthProvider({ children }) {
 }
 
 export const useAuth = () => useContext(AuthContext)
-

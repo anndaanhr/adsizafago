@@ -144,4 +144,3 @@ export function UpcomingReleases() {
     </div>
   )
 }
-

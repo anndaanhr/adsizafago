@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useSearchParams } from "next/navigation"
+import { useSearchParams, useRouter } from "next/navigation"
 import { Filter, ChevronDown, Search, X } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -17,7 +17,9 @@ import { mockProducts } from "@/lib/mock-data"
 
 export default function ProductsPage() {
   const searchParams = useSearchParams()
+  const router = useRouter()
   const [products, setProducts] = useState([])
+  const [filteredProducts, setFilteredProducts] = useState([])
   const [loading, setLoading] = useState(true)
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
   const [sortOption, setSortOption] = useState("featured")
@@ -29,11 +31,15 @@ export default function ProductsPage() {
     genres: [],
     publishers: [],
   })
+  const [currentPage, setCurrentPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
+  const productsPerPage = 20
 
   // Get category from URL params
   const category = searchParams.get("category") || "all"
   const urlSearchQuery = searchParams.get("search") || ""
   const filter = searchParams.get("filter") || ""
+  const page = Number.parseInt(searchParams.get("page") || "1", 10)
 
   useEffect(() => {
     // Set initial search query from URL
@@ -45,11 +51,18 @@ export default function ProductsPage() {
     if (category !== "all") {
       setActiveTab(category)
     }
-  }, [urlSearchQuery, category])
+
+    // Set initial page from URL
+    if (page) {
+      setCurrentPage(page)
+    }
+  }, [urlSearchQuery, category, page])
 
   // Handle search submission
   const handleSearch = (e) => {
     e.preventDefault()
+    setCurrentPage(1)
+    updateURL(1)
     filterProducts()
   }
 
@@ -70,6 +83,10 @@ export default function ProductsPage() {
         [type]: current,
       }
     })
+
+    // Reset to page 1 when filters change
+    setCurrentPage(1)
+    updateURL(1)
   }
 
   // Reset filters
@@ -82,6 +99,8 @@ export default function ProductsPage() {
     setPriceRange([0, 100])
     setSearchQuery("")
     setSortOption("featured")
+    setCurrentPage(1)
+    updateURL(1)
   }
 
   // Filter products based on active tab, search query, and filters
@@ -89,7 +108,7 @@ export default function ProductsPage() {
     setLoading(true)
 
     // Filter products based on active tab and search query
-    const filteredProducts = mockProducts.filter((product) => {
+    const filtered = mockProducts.filter((product) => {
       // Filter by category/tab
       if (activeTab !== "all" && product.category !== activeTab) {
         return false
@@ -133,37 +152,39 @@ export default function ProductsPage() {
     })
 
     // Sort products
+    const sortedProducts = [...filtered]
+
     switch (sortOption) {
       case "newest":
-        filteredProducts.sort((a, b) => new Date(b.releaseDate) - new Date(a.releaseDate))
+        sortedProducts.sort((a, b) => new Date(b.releaseDate) - new Date(a.releaseDate))
         break
       case "price-low":
-        filteredProducts.sort((a, b) => {
+        sortedProducts.sort((a, b) => {
           const priceA = a.price - (a.price * a.discount) / 100
           const priceB = b.price - (b.price * b.discount) / 100
           return priceA - priceB
         })
         break
       case "price-high":
-        filteredProducts.sort((a, b) => {
+        sortedProducts.sort((a, b) => {
           const priceA = a.price - (a.price * a.discount) / 100
           const priceB = b.price - (b.price * b.discount) / 100
           return priceB - priceA
         })
         break
       case "bestselling":
-        filteredProducts.sort((a, b) => b.sales - a.sales)
+        sortedProducts.sort((a, b) => b.sales - a.sales)
         break
       case "discount":
-        filteredProducts.sort((a, b) => b.discount - a.discount)
+        sortedProducts.sort((a, b) => b.discount - a.discount)
         break
       case "rating":
-        filteredProducts.sort((a, b) => b.rating - a.rating)
+        sortedProducts.sort((a, b) => b.rating - a.rating)
         break
       // Featured is default
       default:
         // Mix of bestselling, rating, and newness
-        filteredProducts.sort((a, b) => {
+        sortedProducts.sort((a, b) => {
           const scoreA =
             a.sales / 1000000 +
             a.rating +
@@ -176,14 +197,46 @@ export default function ProductsPage() {
         })
     }
 
-    setProducts(filteredProducts)
+    // Calculate total pages
+    const totalPages = Math.ceil(sortedProducts.length / productsPerPage)
+    setTotalPages(totalPages)
+    setFilteredProducts(sortedProducts)
+
+    // Get current page products
+    const indexOfLastProduct = currentPage * productsPerPage
+    const indexOfFirstProduct = indexOfLastProduct - productsPerPage
+    const currentProducts = sortedProducts.slice(indexOfFirstProduct, indexOfLastProduct)
+
+    setProducts(currentProducts)
     setLoading(false)
   }
 
-  // Fetch products on initial load and when filters change
+  // Update URL with page parameter
+  const updateURL = (page) => {
+    const params = new URLSearchParams(searchParams.toString())
+    params.set("page", page.toString())
+    router.push(`/products?${params.toString()}`, { scroll: false })
+  }
+
+  // Handle page change
+  const handlePageChange = (page) => {
+    setCurrentPage(page)
+    updateURL(page)
+    // Scroll to top of product section
+    document.getElementById("products-section").scrollIntoView({ behavior: "smooth" })
+  }
+
+  // Reset to page 1 when filters change (except when currentPage itself changes)
+  useEffect(() => {
+    setCurrentPage(1)
+    updateURL(1)
+    // We don't call filterProducts() here because the currentPage change will trigger the next useEffect
+  }, [activeTab, sortOption, selectedFilters, priceRange, searchQuery])
+
+  // Fetch products when page or filters change
   useEffect(() => {
     filterProducts()
-  }, [activeTab, sortOption, selectedFilters, priceRange])
+  }, [activeTab, sortOption, selectedFilters, priceRange, currentPage, searchQuery])
 
   // Get page title based on category
   const getPageTitle = () => {
@@ -205,6 +258,83 @@ export default function ProductsPage() {
       default:
         return "All Products"
     }
+  }
+
+  // Generate pagination items
+  const generatePaginationItems = () => {
+    const items = []
+    const maxVisiblePages = 5
+
+    // Always show first page
+    items.push(
+      <Button
+        key="page-1"
+        variant={currentPage === 1 ? "default" : "outline"}
+        size="sm"
+        className={`h-8 w-8 p-0 ${currentPage === 1 ? "bg-primary text-primary-foreground hover:bg-primary/90" : ""}`}
+        onClick={() => handlePageChange(1)}
+      >
+        1
+      </Button>,
+    )
+
+    // Calculate range of pages to show
+    let startPage = Math.max(2, currentPage - Math.floor(maxVisiblePages / 2))
+    const endPage = Math.min(totalPages - 1, startPage + maxVisiblePages - 3)
+
+    if (endPage - startPage < maxVisiblePages - 3) {
+      startPage = Math.max(2, endPage - (maxVisiblePages - 3) + 1)
+    }
+
+    // Add ellipsis if needed
+    if (startPage > 2) {
+      items.push(
+        <span key="ellipsis-1" className="px-2">
+          ...
+        </span>,
+      )
+    }
+
+    // Add middle pages
+    for (let i = startPage; i <= endPage; i++) {
+      items.push(
+        <Button
+          key={`page-${i}`}
+          variant={currentPage === i ? "default" : "outline"}
+          size="sm"
+          className={`h-8 w-8 p-0 ${currentPage === i ? "bg-primary text-primary-foreground hover:bg-primary/90" : ""}`}
+          onClick={() => handlePageChange(i)}
+        >
+          {i}
+        </Button>,
+      )
+    }
+
+    // Add ellipsis if needed
+    if (endPage < totalPages - 1) {
+      items.push(
+        <span key="ellipsis-2" className="px-2">
+          ...
+        </span>,
+      )
+    }
+
+    // Always show last page if there is more than one page
+    if (totalPages > 1) {
+      items.push(
+        <Button
+          key={`page-${totalPages}`}
+          variant={currentPage === totalPages ? "default" : "outline"}
+          size="sm"
+          className={`h-8 w-8 p-0 ${currentPage === totalPages ? "bg-primary text-primary-foreground hover:bg-primary/90" : ""}`}
+          onClick={() => handlePageChange(totalPages)}
+        >
+          {totalPages}
+        </Button>,
+      )
+    }
+
+    return items
   }
 
   return (
@@ -330,7 +460,7 @@ export default function ProductsPage() {
         </div>
 
         {/* Products */}
-        <div className="flex-1">
+        <div className="flex-1" id="products-section">
           {/* Active filters */}
           {(urlSearchQuery ||
             filter ||
@@ -363,31 +493,36 @@ export default function ProductsPage() {
             </div>
           ) : products.length > 0 ? (
             <>
-              <div className="text-sm text-muted-foreground mb-4">Showing {products.length} products</div>
+              <div className="text-sm text-muted-foreground mb-4">
+                Showing {(currentPage - 1) * productsPerPage + 1}-
+                {Math.min(currentPage * productsPerPage, filteredProducts.length)} of {filteredProducts.length} products
+              </div>
               <ProductGrid products={products} />
 
               {/* Pagination */}
-              <div className="flex items-center justify-center space-x-2 mt-12">
-                <Button variant="outline" size="icon" disabled>
-                  <ChevronDown className="h-4 w-4 rotate-90" />
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="h-8 w-8 p-0 bg-primary text-primary-foreground hover:bg-primary/90"
-                >
-                  1
-                </Button>
-                <Button variant="outline" size="sm" className="h-8 w-8 p-0">
-                  2
-                </Button>
-                <Button variant="outline" size="sm" className="h-8 w-8 p-0">
-                  3
-                </Button>
-                <Button variant="outline" size="icon">
-                  <ChevronDown className="h-4 w-4 -rotate-90" />
-                </Button>
-              </div>
+              {totalPages > 1 && (
+                <div className="flex items-center justify-center space-x-2 mt-12">
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => currentPage > 1 && handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                  >
+                    <ChevronDown className="h-4 w-4 rotate-90" />
+                  </Button>
+
+                  {generatePaginationItems()}
+
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => currentPage < totalPages && handlePageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                  >
+                    <ChevronDown className="h-4 w-4 -rotate-90" />
+                  </Button>
+                </div>
+              )}
             </>
           ) : (
             <div className="text-center py-12 bg-muted/30 rounded-lg border border-dashed">
@@ -401,4 +536,3 @@ export default function ProductsPage() {
     </div>
   )
 }
-

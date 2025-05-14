@@ -183,7 +183,10 @@ export default function ReviewOrderPage() {
                   <Separator />
                   <div className="flex items-center justify-between font-medium text-lg">
                     <span>Total</span>
-                    <span>${total.toFixed(2)}</span>
+                    <div className="text-right">
+                      <span>${total.toFixed(2)}</span>
+                      <p className="text-xs text-muted-foreground">≈ Rp {(total * 15500).toLocaleString("id-ID")}</p>
+                    </div>
                   </div>
 
                   <div className="pt-4">
@@ -211,4 +214,3 @@ export default function ReviewOrderPage() {
     </div>
   )
 }
-

@@ -131,4 +131,3 @@ export function Carousel({ items }: CarouselProps) {
     </div>
   )
 }
-

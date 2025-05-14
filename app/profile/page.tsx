@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge"
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
+import Link from "next/link"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -15,6 +16,7 @@ import { Switch } from "@/components/ui/switch"
 import { useToast } from "@/components/ui/use-toast"
 import { useAuth } from "@/components/auth-provider"
 import { Package, Heart, Settings, User, LogOut } from "lucide-react"
+import { mockProducts } from "@/lib/mock-data"
 
 export default function ProfilePage() {
   const { user, logout } = useAuth()
@@ -23,7 +25,7 @@ export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState("profile")
   const [isLoading, setIsLoading] = useState(true)
   const [orders, setOrders] = useState([])
-  const [wishlist, setWishlist] = useState([])
+  const [wishlistItems, setWishlistItems] = useState([])
 
   // Settings state
   const [settings, setSettings] = useState({
@@ -64,15 +66,24 @@ export default function ProfilePage() {
     }
 
     // Load wishlist
-    const storedWishlist = localStorage.getItem("zafago_wishlist")
-    if (storedWishlist) {
+    const loadWishlist = () => {
       try {
-        setWishlist(JSON.parse(storedWishlist))
+        const storedWishlist = localStorage.getItem("zafago_wishlist")
+        if (storedWishlist) {
+          const wishlistIds = JSON.parse(storedWishlist)
+          // Find the actual product details for each wishlist item
+          const items = wishlistIds.map((id) => {
+            const product = mockProducts.find((p) => p.id === id)
+            return product || { id, title: "Unknown Product", image: "/placeholder.svg" }
+          })
+          setWishlistItems(items)
+        }
       } catch (error) {
         console.error("Failed to parse wishlist", error)
       }
     }
 
+    loadWishlist()
     setIsLoading(false)
   }, [user, router])
 
@@ -88,6 +99,32 @@ export default function ProfilePage() {
       title: "Settings updated",
       description: "Your settings have been updated successfully.",
     })
+  }
+
+  const handleRemoveFromWishlist = (itemId) => {
+    try {
+      const storedWishlist = localStorage.getItem("zafago_wishlist")
+      if (storedWishlist) {
+        const wishlistIds = JSON.parse(storedWishlist)
+        const updatedWishlist = wishlistIds.filter((id) => id !== itemId)
+        localStorage.setItem("zafago_wishlist", JSON.stringify(updatedWishlist))
+
+        // Update the state
+        setWishlistItems(wishlistItems.filter((item) => item.id !== itemId))
+
+        toast({
+          title: "Item removed",
+          description: "The item has been removed from your wishlist.",
+        })
+      }
+    } catch (error) {
+      console.error("Failed to remove item from wishlist", error)
+      toast({
+        title: "Error",
+        description: "Failed to remove item from wishlist.",
+        variant: "destructive",
+      })
+    }
   }
 
   if (isLoading) {
@@ -264,10 +301,24 @@ export default function ProfilePage() {
                           <Separator />
                           <div className="space-y-2">
                             <h4 className="font-medium text-sm">Items</h4>
-                            <ul className="space-y-1">
+                            <ul className="space-y-2">
                               {order.items.map((item, index) => (
-                                <li key={index} className="text-sm">
-                                  {item.title || `Product #${item}`}
+                                <li key={index} className="flex items-center justify-between">
+                                  <div className="flex items-center gap-2">
+                                    <div className="relative h-8 w-8 rounded overflow-hidden flex-shrink-0">
+                                      <Image
+                                        src={
+                                          item.image ||
+                                          `/placeholder.svg?height=40&width=40&text=${encodeURIComponent(item.title)}`
+                                        }
+                                        alt={item.title}
+                                        fill
+                                        className="object-cover"
+                                      />
+                                    </div>
+                                    <span className="text-sm">{item.title}</span>
+                                  </div>
+                                  <Badge variant="outline">{item.platform}</Badge>
                                 </li>
                               ))}
                             </ul>
@@ -286,7 +337,7 @@ export default function ProfilePage() {
                       You haven't placed any orders yet. Start shopping to see your orders here.
                     </p>
                     <Button asChild>
-                      <a href="/products">Browse Products</a>
+                      <Link href="/products">Browse Products</Link>
                     </Button>
                   </CardContent>
                 </Card>
@@ -298,22 +349,53 @@ export default function ProfilePage() {
                 <h2 className="text-2xl font-bold">Wishlist</h2>
               </div>
 
-              {wishlist.length > 0 ? (
+              {wishlistItems.length > 0 ? (
                 <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-                  {wishlist.map((item) => (
-                    <Card key={item}>
+                  {wishlistItems.map((item) => (
+                    <Card key={item.id}>
                       <CardContent className="p-4">
                         <div className="flex items-center gap-4">
                           <div className="relative h-16 w-16 rounded overflow-hidden flex-shrink-0">
-                            <Image src="/placeholder.svg" alt="Product" fill className="object-cover" />
+                            <Image
+                              src={
+                                item.image ||
+                                `/placeholder.svg?height=80&width=80&text=${encodeURIComponent(item.title)}`
+                              }
+                              alt={item.title}
+                              fill
+                              className="object-cover"
+                            />
                           </div>
                           <div className="flex-1">
-                            <h3 className="font-medium line-clamp-1">{item}</h3>
+                            <h3 className="font-medium line-clamp-1">{item.title}</h3>
+                            {item.platform && (
+                              <Badge variant="outline" className="mt-1">
+                                {item.platform}
+                              </Badge>
+                            )}
+                            {item.price && (
+                              <p className="text-sm mt-1">
+                                $
+                                {item.discount
+                                  ? (item.price - (item.price * item.discount) / 100).toFixed(2)
+                                  : item.price.toFixed(2)}
+                                {item.discount > 0 && (
+                                  <span className="ml-2 text-xs text-muted-foreground line-through">
+                                    ${item.price.toFixed(2)}
+                                  </span>
+                                )}
+                              </p>
+                            )}
                             <div className="flex gap-2 mt-2">
-                              <Button size="sm" variant="outline">
-                                View
+                              <Button size="sm" variant="outline" asChild>
+                                <Link href={`/products/${item.id}`}>View</Link>
                               </Button>
-                              <Button size="sm" variant="outline" className="text-destructive">
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                className="text-destructive"
+                                onClick={() => handleRemoveFromWishlist(item.id)}
+                              >
                                 Remove
                               </Button>
                             </div>
@@ -332,7 +414,7 @@ export default function ProfilePage() {
                       Save items you're interested in for later by adding them to your wishlist.
                     </p>
                     <Button asChild>
-                      <a href="/products">Browse Products</a>
+                      <Link href="/products">Browse Products</Link>
                     </Button>
                   </CardContent>
                 </Card>
@@ -425,4 +507,3 @@ export default function ProfilePage() {
     </div>
   )
 }
-

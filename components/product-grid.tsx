@@ -1,8 +1,9 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef } from "react"
 import Image from "next/image"
 import { Heart, ShoppingCart, Eye, Tag } from "lucide-react"
+import { motion, AnimatePresence } from "framer-motion"
 
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -19,6 +20,8 @@ export function ProductGrid({ products, showSaleTags = false }: ProductGridProps
   const { toast } = useToast()
   const { user, openLoginModal } = useAuth()
   const [hoveredProduct, setHoveredProduct] = useState(null)
+  const [animatingProducts, setAnimatingProducts] = useState({})
+  const gridRef = useRef(null)
 
   // Add to wishlist
   const addToWishlist = (e, product) => {
@@ -29,6 +32,12 @@ export function ProductGrid({ products, showSaleTags = false }: ProductGridProps
       openLoginModal("Please sign in to add items to your wishlist")
       return
     }
+
+    // Set animating state for this product
+    setAnimatingProducts((prev) => ({
+      ...prev,
+      [product.id]: { type: "wishlist", animating: true },
+    }))
 
     // In a real app, this would be an API call to add the item to the user's wishlist
     // For now, we'll update local storage
@@ -49,6 +58,15 @@ export function ProductGrid({ products, showSaleTags = false }: ProductGridProps
         title: "Already in wishlist",
         description: `${product.title} is already in your wishlist.`,
       })
+
+      // Reset animation state after a delay
+      setTimeout(() => {
+        setAnimatingProducts((prev) => ({
+          ...prev,
+          [product.id]: { ...prev[product.id], animating: false },
+        }))
+      }, 1000)
+
       return
     }
 
@@ -60,12 +78,26 @@ export function ProductGrid({ products, showSaleTags = false }: ProductGridProps
       title: "Added to wishlist",
       description: `${product.title} has been added to your wishlist.`,
     })
+
+    // Reset animation state after animation completes
+    setTimeout(() => {
+      setAnimatingProducts((prev) => ({
+        ...prev,
+        [product.id]: { ...prev[product.id], animating: false },
+      }))
+    }, 1000)
   }
 
   // Add to cart
   const addToCart = (e, product) => {
     e.preventDefault()
     e.stopPropagation()
+
+    // Set animating state for this product
+    setAnimatingProducts((prev) => ({
+      ...prev,
+      [product.id]: { type: "cart", animating: true },
+    }))
 
     // In a real app, this would be an API call to add the item to the user's cart
     // For now, we'll update local storage
@@ -101,10 +133,21 @@ export function ProductGrid({ products, showSaleTags = false }: ProductGridProps
 
     localStorage.setItem("zafago_cart", JSON.stringify(cartItems))
 
+    // Trigger storage event for header to update cart count
+    window.dispatchEvent(new Event("storage"))
+
     toast({
       title: "Added to cart",
       description: `${product.title} has been added to your cart.`,
     })
+
+    // Reset animation state after animation completes
+    setTimeout(() => {
+      setAnimatingProducts((prev) => ({
+        ...prev,
+        [product.id]: { ...prev[product.id], animating: false },
+      }))
+    }, 1000)
   }
 
   // Navigate to product detail
@@ -113,14 +156,18 @@ export function ProductGrid({ products, showSaleTags = false }: ProductGridProps
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+    <div ref={gridRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 relative">
       {products.map((product) => {
         const discountedPrice = product.price - (product.price * product.discount) / 100
+        const isAnimating = animatingProducts[product.id]?.animating || false
+        const animationType = animatingProducts[product.id]?.type || null
 
         return (
           <Card
             key={product.id}
-            className="overflow-hidden group hover:shadow-md transition-shadow cursor-pointer"
+            className={`overflow-hidden group hover:shadow-md transition-shadow cursor-pointer ${
+              isAnimating ? "relative z-10" : ""
+            }`}
             onMouseEnter={() => setHoveredProduct(product.id)}
             onMouseLeave={() => setHoveredProduct(null)}
             onClick={() => navigateToProduct(product.id)}
@@ -132,7 +179,9 @@ export function ProductGrid({ products, showSaleTags = false }: ProductGridProps
                     src={product.image || "/placeholder.svg"}
                     alt={product.title}
                     fill
-                    className="object-cover transition-transform duration-300 group-hover:scale-105"
+                    className={`object-cover transition-transform duration-300 ${
+                      isAnimating ? "scale-110" : "group-hover:scale-105"
+                    }`}
                   />
                   {product.discount > 0 && (
                     <div className="absolute top-2 right-2 bg-sale-red text-white text-xs font-bold px-2 py-1 rounded">
@@ -146,6 +195,33 @@ export function ProductGrid({ products, showSaleTags = false }: ProductGridProps
                     </div>
                   )}
 
+                  {/* Animation overlay */}
+                  <AnimatePresence>
+                    {isAnimating && (
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 1.2 }}
+                        transition={{ duration: 0.5 }}
+                        className="absolute inset-0 bg-black/40 flex items-center justify-center z-20"
+                      >
+                        <motion.div
+                          initial={{ scale: 0.5, y: 0 }}
+                          animate={{ scale: 1.2, y: -20 }}
+                          exit={{ scale: 0, y: -50, opacity: 0 }}
+                          transition={{ duration: 0.5 }}
+                          className={`rounded-full p-3 ${animationType === "wishlist" ? "bg-red-500" : "bg-primary"}`}
+                        >
+                          {animationType === "wishlist" ? (
+                            <Heart className="h-6 w-6 text-white fill-white" />
+                          ) : (
+                            <ShoppingCart className="h-6 w-6 text-white" />
+                          )}
+                        </motion.div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
                   {/* Quick action buttons */}
                   <div
                     className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3 flex justify-center gap-2 transition-opacity duration-300 ${
@@ -156,7 +232,9 @@ export function ProductGrid({ products, showSaleTags = false }: ProductGridProps
                     <Button
                       variant="secondary"
                       size="icon"
-                      className="h-8 w-8 rounded-full bg-white/20 hover:bg-white/40 backdrop-blur-sm"
+                      className={`h-8 w-8 rounded-full bg-white/20 hover:bg-white/40 backdrop-blur-sm ${
+                        isAnimating && animationType === "wishlist" ? "animate-pulse bg-red-500/50" : ""
+                      }`}
                       onClick={(e) => addToWishlist(e, product)}
                     >
                       <Heart className="h-4 w-4 text-white" />
@@ -165,7 +243,9 @@ export function ProductGrid({ products, showSaleTags = false }: ProductGridProps
                     <Button
                       variant="secondary"
                       size="icon"
-                      className="h-8 w-8 rounded-full bg-white/20 hover:bg-white/40 backdrop-blur-sm"
+                      className={`h-8 w-8 rounded-full bg-white/20 hover:bg-white/40 backdrop-blur-sm ${
+                        isAnimating && animationType === "cart" ? "animate-pulse bg-primary/50" : ""
+                      }`}
                       onClick={(e) => addToCart(e, product)}
                     >
                       <ShoppingCart className="h-4 w-4 text-white" />
@@ -232,4 +312,3 @@ export function ProductGrid({ products, showSaleTags = false }: ProductGridProps
     </div>
   )
 }
-

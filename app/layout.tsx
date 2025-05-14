@@ -25,24 +25,36 @@ export default function RootLayout({ children }) {
     // Script to scroll to top on page navigation
     if (typeof window !== 'undefined') {
       // Set scroll restoration to manual
-      window.history.scrollRestoration = 'manual';
+      if ('scrollRestoration' in history) {
+        history.scrollRestoration = 'manual';
+      }
       
       // Scroll to top on initial load
-      document.addEventListener('DOMContentLoaded', function() {
+      window.addEventListener('load', function() {
         window.scrollTo(0, 0);
       });
       
-      // Add event listener for route changes
-      let lastUrl = window.location.href;
+      // Create a more reliable navigation observer
+      let lastPathname = window.location.pathname;
+      
+      // Use MutationObserver to detect DOM changes that might indicate navigation
       const observer = new MutationObserver(() => {
-        if (lastUrl !== window.location.href) {
-          lastUrl = window.location.href;
-          window.scrollTo(0, 0);
+        if (lastPathname !== window.location.pathname) {
+          lastPathname = window.location.pathname;
+          window.scrollTo({ top: 0, behavior: 'instant' });
         }
       });
       
       // Start observing the document
-      observer.observe(document, { subtree: true, childList: true });
+      observer.observe(document.documentElement, { 
+        childList: true, 
+        subtree: true 
+      });
+      
+      // Also listen for the Next.js route change events
+      document.addEventListener('nextjs:route-change-complete', () => {
+        window.scrollTo({ top: 0, behavior: 'instant' });
+      });
     }
   `,
           }}
@@ -63,7 +75,3 @@ export default function RootLayout({ children }) {
     </html>
   )
 }
-
-
-
-import './globals.css'

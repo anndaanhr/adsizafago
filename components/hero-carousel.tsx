@@ -131,4 +131,3 @@ export function HeroCarousel({ items }: CarouselProps) {
     </div>
   )
 }
-

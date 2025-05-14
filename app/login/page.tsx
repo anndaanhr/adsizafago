@@ -1,9 +1,9 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { Eye, EyeOff } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -20,10 +20,27 @@ export default function LoginPage() {
   const [password, setPassword] = useState("")
   const [rememberMe, setRememberMe] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [redirectPath, setRedirectPath] = useState("")
 
   const { login, loginError } = useAuth()
   const { toast } = useToast()
   const router = useRouter()
+  const searchParams = useSearchParams()
+
+  // Check for redirect path from URL or localStorage
+  useEffect(() => {
+    // First check URL parameters
+    const redirectTo = searchParams.get("redirectTo")
+    if (redirectTo) {
+      setRedirectPath(redirectTo)
+    } else {
+      // Then check localStorage
+      const storedRedirect = localStorage.getItem("zafago_redirect_after_login")
+      if (storedRedirect) {
+        setRedirectPath(storedRedirect)
+      }
+    }
+  }, [searchParams])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -37,7 +54,16 @@ export default function LoginPage() {
           title: "Login successful",
           description: "You have been logged in successfully.",
         })
-        router.push("/")
+
+        // Clear the stored redirect path
+        localStorage.removeItem("zafago_redirect_after_login")
+
+        // Redirect to the stored path or home page
+        if (redirectPath) {
+          router.push(redirectPath)
+        } else {
+          router.push("/")
+        }
       }
     } catch (error) {
       console.error("Login error:", error)
@@ -63,6 +89,11 @@ export default function LoginPage() {
           <CardDescription className="text-center">
             Enter your email and password to access your account
           </CardDescription>
+          {redirectPath === "/checkout" && (
+            <div className="mt-2 text-sm font-medium text-primary text-center">
+              Sign in required to complete your purchase
+            </div>
+          )}
         </CardHeader>
         <CardContent className="space-y-4">
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -178,4 +209,3 @@ export default function LoginPage() {
     </div>
   )
 }
-

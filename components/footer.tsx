@@ -186,6 +186,11 @@ export function Footer() {
                   Privacy Policy
                 </Link>
               </li>
+              <li>
+                <Link href="/cookies" className="text-muted-foreground hover:text-foreground">
+                  Cookies
+                </Link>
+              </li>
             </ul>
           </div>
         </div>
@@ -194,17 +199,6 @@ export function Footer() {
             <p className="text-xs text-muted-foreground">
               &copy; {new Date().getFullYear()} Zafago. All rights reserved.
             </p>
-            <div className="flex items-center space-x-4">
-              <Link href="/terms" className="text-xs text-muted-foreground hover:text-foreground">
-                Terms
-              </Link>
-              <Link href="/privacy" className="text-xs text-muted-foreground hover:text-foreground">
-                Privacy
-              </Link>
-              <Link href="/cookies" className="text-xs text-muted-foreground hover:text-foreground">
-                Cookies
-              </Link>
-            </div>
             <div className="flex items-center space-x-2">
               <Image
                 src="/placeholder.svg?height=32&width=32&text=VISA"
@@ -241,4 +235,3 @@ export function Footer() {
     </footer>
   )
 }
-

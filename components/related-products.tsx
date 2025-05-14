@@ -43,4 +43,3 @@ export function RelatedProducts({ productId, category }: RelatedProductsProps) {
 
   return <ProductGrid products={products} />
 }
-

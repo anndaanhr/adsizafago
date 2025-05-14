@@ -1,24 +1,24 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import Image from "next/image"
 import Link from "next/link"
-import { Trash2, Plus, Minus, ShoppingCart, ArrowRight } from "lucide-react"
+import Image from "next/image"
+import { useRouter } from "next/navigation"
+import { Trash2, Plus, Minus, ShoppingBag, ArrowRight } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Separator } from "@/components/ui/separator"
 import { Card, CardContent } from "@/components/ui/card"
+import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
 import { useToast } from "@/components/ui/use-toast"
+import { useAuth } from "@/components/auth-provider"
 
 export default function CartPage() {
-  const { toast } = useToast()
   const [cartItems, setCartItems] = useState([])
-  const [couponCode, setCouponCode] = useState("")
-  const [couponApplied, setCouponApplied] = useState(false)
-  const [couponDiscount, setCouponDiscount] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
+  const { toast } = useToast()
+  const { user, syncUserData } = useAuth()
+  const router = useRouter()
 
   // Load cart items from localStorage
   useEffect(() => {
@@ -39,69 +39,43 @@ export default function CartPage() {
     loadCart()
   }, [])
 
-  // Save cart to localStorage whenever it changes
+  // Update cart in localStorage and user data when cart items change
   useEffect(() => {
     if (!isLoading) {
       localStorage.setItem("zafago_cart", JSON.stringify(cartItems))
-    }
-  }, [cartItems, isLoading])
 
-  const updateQuantity = (itemId, newQuantity) => {
-    try {
-      // If quantity is less than 1, remove the item
-      if (newQuantity < 1) {
-        removeItem(itemId)
-        return
+      // If user is logged in, update their cart in user data
+      if (user) {
+        const updatedUser = { ...user, cart: cartItems }
+        localStorage.setItem("zafago_user", JSON.stringify(updatedUser))
+        syncUserData()
       }
-
-      const updatedCart = cartItems.map((item) => (item.id === itemId ? { ...item, quantity: newQuantity } : item))
-
-      setCartItems(updatedCart)
-      localStorage.setItem("zafago_cart", JSON.stringify(updatedCart))
-
-      // Trigger storage event for header to update cart count
-      window.dispatchEvent(new Event("storage"))
-    } catch (error) {
-      console.error("Failed to update quantity", error)
-      toast({
-        title: "Error",
-        description: "Failed to update quantity. Please try again.",
-        variant: "destructive",
-      })
     }
+  }, [cartItems, isLoading, user, syncUserData])
+
+  const updateQuantity = (id, newQuantity) => {
+    if (newQuantity < 1) return
+
+    setCartItems((prevItems) => prevItems.map((item) => (item.id === id ? { ...item, quantity: newQuantity } : item)))
+
+    toast({
+      title: "Cart updated",
+      description: "Item quantity has been updated.",
+    })
   }
 
-  const removeItem = (itemId) => {
-    try {
-      const updatedCart = cartItems.filter((item) => item.id !== itemId)
-      setCartItems(updatedCart)
-      localStorage.setItem("zafago_cart", JSON.stringify(updatedCart))
+  const removeItem = (id) => {
+    setCartItems((prevItems) => prevItems.filter((item) => item.id !== id))
 
-      // Trigger storage event for header to update cart count
-      window.dispatchEvent(new Event("storage"))
-
-      toast({
-        title: "Item removed",
-        description: "The item has been removed from your cart.",
-      })
-    } catch (error) {
-      console.error("Failed to remove item from cart", error)
-      toast({
-        title: "Error",
-        description: "Failed to remove item from cart. Please try again.",
-        variant: "destructive",
-      })
-    }
+    toast({
+      title: "Item removed",
+      description: "Item has been removed from your cart.",
+    })
   }
 
   const clearCart = () => {
     setCartItems([])
-    setCouponApplied(false)
-    setCouponDiscount(0)
     localStorage.setItem("zafago_cart", JSON.stringify([]))
-
-    // Trigger storage event for header to update cart count
-    window.dispatchEvent(new Event("storage"))
 
     toast({
       title: "Cart cleared",
@@ -109,32 +83,28 @@ export default function CartPage() {
     })
   }
 
-  const applyCoupon = () => {
-    if (couponCode.toLowerCase() === "discount10") {
-      setCouponApplied(true)
-      setCouponDiscount(10)
+  // Calculate order summary
+  const subtotal = cartItems.reduce((total, item) => {
+    const itemPrice = item.discount ? item.price - (item.price * item.discount) / 100 : item.price
+    return total + itemPrice * item.quantity
+  }, 0)
+
+  const shipping = subtotal > 0 ? 4.99 : 0
+  const tax = subtotal * 0.08 // 8% tax
+  const total = subtotal + shipping + tax
+
+  const handleCheckout = () => {
+    if (cartItems.length === 0) {
       toast({
-        title: "Coupon applied",
-        description: "10% discount has been applied to your order.",
-      })
-    } else {
-      toast({
-        title: "Invalid coupon",
-        description: "The coupon code you entered is invalid or expired.",
+        title: "Cart is empty",
+        description: "Please add items to your cart before checking out.",
         variant: "destructive",
       })
+      return
     }
-  }
 
-  // Calculate totals
-  const calculateItemTotal = (item) => {
-    const discountedPrice = item.discount ? item.price - (item.price * item.discount) / 100 : item.price
-    return discountedPrice * item.quantity
+    router.push("/checkout")
   }
-
-  const subtotal = cartItems.reduce((sum, item) => sum + calculateItemTotal(item), 0)
-  const discount = couponApplied ? subtotal * (couponDiscount / 100) : 0
-  const total = subtotal - discount
 
   if (isLoading) {
     return (
@@ -153,204 +123,167 @@ export default function CartPage() {
 
       {cartItems.length === 0 ? (
         <div className="text-center py-12">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-muted mb-4">
-            <ShoppingCart className="h-8 w-8 text-muted-foreground" />
+          <div className="mx-auto w-24 h-24 rounded-full bg-muted flex items-center justify-center mb-6">
+            <ShoppingBag className="h-12 w-12 text-muted-foreground" />
           </div>
-          <h2 className="text-2xl font-semibold mb-4">Your cart is empty</h2>
-          <p className="text-muted-foreground mb-8">Looks like you haven't added any products to your cart yet.</p>
+          <h2 className="text-2xl font-semibold mb-2">Your cart is empty</h2>
+          <p className="text-muted-foreground mb-6">Looks like you haven't added any items to your cart yet.</p>
           <Button asChild>
-            <Link href="/products">Continue Shopping</Link>
+            <Link href="/products">Browse Products</Link>
           </Button>
         </div>
       ) : (
         <div className="grid md:grid-cols-3 gap-8">
           <div className="md:col-span-2">
-            <div className="rounded-lg border bg-card">
-              <div className="p-6">
-                <div className="hidden md:grid grid-cols-12 gap-4 pb-4 text-sm font-medium text-muted-foreground">
-                  <div className="col-span-6">Product</div>
-                  <div className="col-span-2 text-center">Price</div>
-                  <div className="col-span-2 text-center">Quantity</div>
-                  <div className="col-span-2 text-right">Total</div>
-                </div>
-                <Separator />
+            <div className="bg-card rounded-lg border">
+              <div className="p-6 flex justify-between items-center">
+                <h2 className="text-xl font-semibold">
+                  {cartItems.length} {cartItems.length === 1 ? "Item" : "Items"}
+                </h2>
+                <Button variant="outline" size="sm" onClick={clearCart}>
+                  Clear Cart
+                </Button>
+              </div>
+              <Separator />
+
+              <div className="divide-y">
                 {cartItems.map((item) => {
                   const discountedPrice = item.discount
                     ? (item.price - (item.price * item.discount) / 100).toFixed(2)
                     : item.price.toFixed(2)
 
                   return (
-                    <div key={item.id} className="py-6">
-                      <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
-                        <div className="col-span-6 flex items-center gap-4">
-                          <div className="relative h-20 w-20 rounded-md overflow-hidden flex-shrink-0">
-                            <Image
-                              src={
-                                item.image ||
-                                `/placeholder.svg?height=80&width=80&text=${encodeURIComponent(item.title)}`
-                              }
-                              alt={item.title}
-                              fill
-                              className="object-cover"
-                            />
-                          </div>
+                    <div key={item.id} className="p-6 flex flex-col sm:flex-row gap-4">
+                      <div className="relative h-24 w-24 rounded-md overflow-hidden flex-shrink-0">
+                        <Image
+                          src={
+                            item.image ||
+                            `/placeholder.svg?height=96&width=96&text=${encodeURIComponent(item.title.charAt(0)) || "/placeholder.svg"}`
+                          }
+                          alt={item.title}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex flex-col sm:flex-row sm:justify-between">
                           <div>
-                            <Link href={`/products/${item.id}`} className="font-medium hover:underline">
-                              {item.title}
-                            </Link>
+                            <h3 className="font-medium">{item.title}</h3>
                             <div className="flex items-center gap-2 mt-1">
-                              <Badge variant="outline">{item.platform}</Badge>
-                              <p className="text-sm text-muted-foreground md:hidden">
-                                ${discountedPrice}
-                                {item.discount > 0 && (
-                                  <span className="ml-2 text-muted-foreground line-through">
-                                    ${item.price.toFixed(2)}
-                                  </span>
-                                )}
-                              </p>
+                              <Badge variant="outline" className="text-xs">
+                                {item.platform}
+                              </Badge>
+                              {item.discount > 0 && (
+                                <Badge variant="secondary" className="text-xs">
+                                  {item.discount}% OFF
+                                </Badge>
+                              )}
                             </div>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="mt-1 h-auto p-0 text-sm text-destructive hover:text-destructive/80 md:hidden"
-                              onClick={() => removeItem(item.id)}
-                            >
-                              <Trash2 className="mr-1 h-3 w-3" />
-                              Remove
-                            </Button>
+                          </div>
+                          <div className="mt-2 sm:mt-0 text-right">
+                            <div className="font-medium">
+                              ${discountedPrice}
+                              {item.discount > 0 && (
+                                <span className="ml-2 text-xs text-muted-foreground line-through">
+                                  ${item.price.toFixed(2)}
+                                </span>
+                              )}
+                            </div>
                           </div>
                         </div>
-                        <div className="col-span-2 text-center hidden md:block">
-                          <div>
-                            ${discountedPrice}
-                            {item.discount > 0 && (
-                              <div className="text-sm text-muted-foreground line-through">${item.price.toFixed(2)}</div>
-                            )}
-                          </div>
-                        </div>
-                        <div className="col-span-2 flex items-center justify-center">
-                          <div className="flex items-center border rounded-md">
+
+                        <div className="flex items-center justify-between mt-4">
+                          <div className="flex items-center">
                             <Button
-                              variant="ghost"
+                              variant="outline"
                               size="icon"
-                              className="h-8 w-8 rounded-none"
+                              className="h-8 w-8 rounded-r-none"
                               onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                              disabled={item.quantity <= 1}
                             >
                               <Minus className="h-3 w-3" />
-                              <span className="sr-only">Decrease</span>
+                              <span className="sr-only">Decrease quantity</span>
                             </Button>
-                            <span className="w-8 text-center text-sm">{item.quantity}</span>
+                            <div className="h-8 px-3 flex items-center justify-center border-y">{item.quantity}</div>
                             <Button
-                              variant="ghost"
+                              variant="outline"
                               size="icon"
-                              className="h-8 w-8 rounded-none"
+                              className="h-8 w-8 rounded-l-none"
                               onClick={() => updateQuantity(item.id, item.quantity + 1)}
                             >
                               <Plus className="h-3 w-3" />
-                              <span className="sr-only">Increase</span>
+                              <span className="sr-only">Increase quantity</span>
                             </Button>
                           </div>
-                        </div>
-                        <div className="col-span-2 text-right flex items-center justify-between md:justify-end">
-                          <span className="font-medium">${calculateItemTotal(item).toFixed(2)}</span>
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="text-destructive hover:text-destructive/80 hidden md:inline-flex"
+                            className="text-muted-foreground"
                             onClick={() => removeItem(item.id)}
                           >
-                            <Trash2 className="h-4 w-4" />
-                            <span className="sr-only">Remove</span>
+                            <Trash2 className="h-4 w-4 mr-1" />
+                            Remove
                           </Button>
                         </div>
                       </div>
-                      {cartItems.indexOf(item) < cartItems.length - 1 && <Separator className="mt-6" />}
                     </div>
                   )
                 })}
               </div>
-              <div className="flex items-center justify-between bg-muted p-6 rounded-b-lg">
-                <Button variant="outline" asChild>
-                  <Link href="/products">Continue Shopping</Link>
-                </Button>
-                <Button variant="ghost" onClick={clearCart}>
-                  Clear Cart
-                </Button>
-              </div>
+            </div>
+
+            <div className="mt-6">
+              <Button variant="outline" asChild className="w-full sm:w-auto">
+                <Link href="/products">Continue Shopping</Link>
+              </Button>
             </div>
           </div>
 
           <div>
-            <Card>
-              <CardContent className="p-6">
-                <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <span className="text-muted-foreground">
-                      Items ({cartItems.reduce((total, item) => total + item.quantity, 0)})
-                    </span>
-                    <span>${subtotal.toFixed(2)}</span>
-                  </div>
-
-                  {couponApplied && (
-                    <div className="flex items-center justify-between text-green-500">
-                      <span>Discount ({couponDiscount}%)</span>
-                      <span>-${discount.toFixed(2)}</span>
+            <div className="sticky top-20">
+              <Card>
+                <CardContent className="p-6">
+                  <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
+                  <div className="space-y-4">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">
+                        Items ({cartItems.reduce((count, item) => count + item.quantity, 0)})
+                      </span>
+                      <span>${subtotal.toFixed(2)}</span>
                     </div>
-                  )}
 
-                  <Separator />
-                  <div className="flex items-center justify-between font-medium text-lg">
-                    <span>Total</span>
-                    <span>${total.toFixed(2)}</span>
-                  </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-muted-foreground">Shipping</span>
+                      <span>${shipping.toFixed(2)}</span>
+                    </div>
 
-                  <div className="pt-4">
-                    <Button className="w-full" size="lg" asChild>
-                      <Link href="/checkout">
-                        Proceed to Checkout
-                        <ArrowRight className="ml-2 h-4 w-4" />
-                      </Link>
+                    <div className="flex items-center justify-between">
+                      <span className="text-muted-foreground">Tax</span>
+                      <span>${tax.toFixed(2)}</span>
+                    </div>
+
+                    <Separator />
+                    <div className="flex items-center justify-between font-medium text-lg">
+                      <span>Total</span>
+                      <div className="text-right">
+                        <span>${total.toFixed(2)}</span>
+                        <p className="text-xs text-muted-foreground">≈ Rp {(total * 15500).toLocaleString("id-ID")}</p>
+                      </div>
+                    </div>
+
+                    <Button className="w-full" size="lg" onClick={handleCheckout}>
+                      Checkout
+                      <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
-                  </div>
 
-                  <div className="pt-4 space-y-4">
-                    <div className="relative">
-                      <div className="absolute inset-0 flex items-center">
-                        <span className="w-full border-t" />
-                      </div>
-                      <div className="relative flex justify-center text-xs uppercase">
-                        <span className="bg-card px-2 text-muted-foreground">Apply Coupon</span>
-                      </div>
-                    </div>
-
-                    <div className="grid gap-2">
-                      <div className="flex items-center">
-                        <Input
-                          type="text"
-                          placeholder="Coupon code"
-                          className="rounded-r-none"
-                          value={couponCode}
-                          onChange={(e) => setCouponCode(e.target.value)}
-                        />
-                        <Button
-                          className="rounded-l-none"
-                          onClick={applyCoupon}
-                          disabled={couponApplied || !couponCode}
-                        >
-                          Apply
-                        </Button>
-                      </div>
-                      <p className="text-xs text-muted-foreground">Try "DISCOUNT10" for 10% off your order</p>
-                    </div>
+                    <div className="text-xs text-center text-muted-foreground">Secure checkout powered by Stripe</div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </div>
           </div>
         </div>
       )}
     </div>
   )
 }
-

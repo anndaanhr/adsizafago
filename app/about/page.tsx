@@ -57,19 +57,24 @@ export default function AboutPage() {
           <h2 className="text-3xl font-bold mb-6">Our Story</h2>
           <div className="prose prose-sm dark:prose-invert max-w-none">
             <p>
-              Zafago was founded in 2020 by a group of passionate gamers and tech enthusiasts who were frustrated with
-              the existing digital marketplace options. They envisioned a platform that would prioritize customer
-              experience, offer competitive pricing, and ensure the authenticity of every digital product sold.
+              Zafago was founded in 2020 in Lampung, Indonesia by a group of passionate gamers and tech enthusiasts who
+              were frustrated with the existing digital marketplace options in Southeast Asia. They envisioned a
+              platform that would prioritize customer experience, offer competitive pricing, and ensure the authenticity
+              of every digital product sold while supporting the growing digital economy in Indonesia and the broader
+              Southeast Asian region.
             </p>
             <p>
-              Starting with a small catalog of game keys, Zafago quickly gained a reputation for reliability and
-              excellent customer service. As word spread, our user base grew, allowing us to expand our offerings to
-              include software licenses, digital gift cards, and other digital products.
+              Starting with a small catalog of game keys from our headquarters in Lampung, Zafago quickly gained a
+              reputation for reliability and excellent customer service throughout Indonesia. As word spread, our user
+              base grew across Southeast Asia, allowing us to expand our offerings to include software licenses, digital
+              gift cards, and other digital products while maintaining our Indonesian roots and values.
             </p>
             <p>
-              Today, Zafago serves customers worldwide, partnering with leading publishers and developers to provide
-              instant access to thousands of digital products. Despite our growth, we remain committed to our founding
-              principles: authenticity, competitive pricing, and exceptional customer service.
+              Today, Zafago serves customers throughout Southeast Asia from our main office in Lampung, Indonesia,
+              partnering with leading publishers and developers to provide instant access to thousands of digital
+              products. We're proud to be an Indonesian company contributing to the region's digital economy. Despite
+              our growth, we remain committed to our founding principles: authenticity, competitive pricing, and
+              exceptional customer service with a distinctly Indonesian approach to hospitality.
             </p>
             <p>
               Our journey is just beginning, and we're excited to continue innovating and expanding our offerings to
@@ -175,28 +180,60 @@ export default function AboutPage() {
           </div>
         </div>
 
+        {/* Indonesian Heritage */}
+        <div className="bg-muted/30 rounded-lg p-8 border">
+          <h2 className="text-3xl font-bold mb-6">Our Indonesian Heritage</h2>
+          <div className="grid md:grid-cols-2 gap-8 items-center">
+            <div className="space-y-4">
+              <p className="text-muted-foreground">
+                Founded and headquartered in the beautiful province of Lampung, Indonesia, Zafago is proud of its
+                Indonesian roots. Our company culture embraces the warmth, hospitality, and innovative spirit that
+                Indonesia is known for.
+              </p>
+              <p className="text-muted-foreground">
+                We're committed to supporting the growth of Indonesia's digital economy by providing reliable digital
+                distribution services, creating tech jobs in Lampung and beyond, and showcasing Indonesian talent on the
+                global stage.
+              </p>
+              <p className="text-muted-foreground">
+                Our understanding of the local market allows us to better serve customers throughout Indonesia and
+                Southeast Asia with payment methods, customer service, and product selections tailored to regional
+                preferences.
+              </p>
+            </div>
+            <div className="relative h-[300px] rounded-lg overflow-hidden">
+              <Image
+                src="/placeholder.svg?height=300&width=500&text=Zafago+Lampung+Office"
+                alt="Zafago Lampung Office"
+                fill
+                className="object-cover"
+              />
+            </div>
+          </div>
+        </div>
+
         {/* Team Section */}
         <div>
           <h2 className="text-3xl font-bold mb-8 text-center">Meet Our Leadership Team</h2>
           <div className="grid md:grid-cols-3 gap-8">
             {[
               {
-                name: "Alex Johnson",
+                name: "Budi Santoso",
                 role: "Founder & CEO",
-                bio: "Alex founded Zafago with a vision to revolutionize digital distribution. With over 15 years of experience in e-commerce and gaming, he leads our strategic direction.",
-                image: "/placeholder.svg?height=300&width=300&text=Alex",
+                bio: "Budi founded Zafago in Lampung with a vision to revolutionize digital distribution in Indonesia. With over 15 years of experience in e-commerce and gaming, he leads our strategic direction with a focus on Southeast Asian markets.",
+                image: "/placeholder.svg?height=300&width=300&text=Budi",
               },
               {
-                name: "Sarah Chen",
+                name: "Dewi Wijaya",
                 role: "Chief Technology Officer",
-                bio: "Sarah oversees all technical aspects of Zafago, from platform development to security. Her background in cybersecurity ensures our platform remains secure and reliable.",
-                image: "/placeholder.svg?height=300&width=300&text=Sarah",
+                bio: "Dewi oversees all technical aspects of Zafago from our Lampung headquarters. Her background in cybersecurity and experience with Indonesian digital infrastructure ensures our platform remains secure and reliable for all users in the region.",
+                image: "/placeholder.svg?height=300&width=300&text=Dewi",
               },
               {
-                name: "Michael Rodriguez",
+                name: "Arief Pratama",
                 role: "Chief Operating Officer",
-                bio: "Michael manages our day-to-day operations and partnerships with publishers. His industry connections have been instrumental in expanding our product catalog.",
-                image: "/placeholder.svg?height=300&width=300&text=Michael",
+                bio: "Arief manages our day-to-day operations and partnerships with publishers throughout Southeast Asia. His industry connections in Indonesia and beyond have been instrumental in expanding our product catalog to serve local needs.",
+                image: "/placeholder.svg?height=300&width=300&text=Arief",
               },
               {
                 name: "Emily Patel",
@@ -303,4 +340,3 @@ export default function AboutPage() {
     </div>
   )
 }
-
