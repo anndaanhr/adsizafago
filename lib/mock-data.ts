@@ -75,7 +75,8 @@ export const mockProducts = [
   {
     id: "game-4",
     title: "FIFA 23",
-    description: "Experience the world's game with over 19,000 players, 700+ teams, 100+ stadiums, and 30+ leagues.",
+    description:
+      "Experience the world's game with over 19,000 players, 700+ teams, 100+ stadiums, and 30+ leagues.",
     image: "/images/fifa23/fifa23.jpg",
     price: 69.99,
     discount: 35,
@@ -98,7 +99,8 @@ export const mockProducts = [
   {
     id: "game-5",
     title: "The Witcher 3: Wild Hunt",
-    description: "A story-driven, open world adventure set in a dark fantasy universe.",
+    description:
+      "A story-driven, open world adventure set in a dark fantasy universe.",
     image: "/images/thewitcher3/witch.jpg",
     price: 39.99,
     discount: 70,
@@ -121,7 +123,8 @@ export const mockProducts = [
   {
     id: "game-6",
     title: "Battlefield 2042",
-    description: "A first-person shooter that marks the return to the iconic all-out warfare of the franchise.",
+    description:
+      "A first-person shooter that marks the return to the iconic all-out warfare of the franchise.",
     image: "/images/battlefield/battlefield2042.jpg",
     price: 59.99,
     discount: 60,
@@ -192,7 +195,8 @@ export const mockProducts = [
   {
     id: "software-1",
     title: "Microsoft Office 2023",
-    description: "The latest version of Microsoft Office with Word, Excel, PowerPoint, and more.",
+    description:
+      "The latest version of Microsoft Office with Word, Excel, PowerPoint, and more.",
     image: "/images/software/microsoftoffice.jpg",
     price: 149.99,
     discount: 20,
@@ -239,7 +243,8 @@ export const mockProducts = [
   {
     id: "software-3",
     title: "Windows 11 Pro",
-    description: "The latest version of Windows with advanced security and management features.",
+    description:
+      "The latest version of Windows with advanced security and management features.",
     image: "/images/windows11.jpg",
     price: 199.99,
     discount: 10,
@@ -262,7 +267,8 @@ export const mockProducts = [
   {
     id: "software-4",
     title: "Autodesk Maya 2023",
-    description: "3D animation, modeling, simulation, and rendering software for film, TV, and games.",
+    description:
+      "3D animation, modeling, simulation, and rendering software for film, TV, and games.",
     image: "/placeholder.svg?height=300&width=300&text=Maya+2023",
     price: 205.0,
     discount: 25,
@@ -284,7 +290,8 @@ export const mockProducts = [
   {
     id: "software-5",
     title: "Norton 360 Deluxe",
-    description: "Comprehensive protection for your devices and online privacy.",
+    description:
+      "Comprehensive protection for your devices and online privacy.",
     image: "/images/software/norton360.jpg",
     price: 89.99,
     discount: 50,
@@ -306,7 +313,8 @@ export const mockProducts = [
   {
     id: "digital-1",
     title: "Steam Wallet $50",
-    description: "Add funds to your Steam Wallet to purchase games, software, and more on Steam.",
+    description:
+      "Add funds to your Steam Wallet to purchase games, software, and more on Steam.",
     image: "/images/subscription/steamwallet50.jpg",
     price: 50.0,
     discount: 5,
@@ -328,7 +336,8 @@ export const mockProducts = [
   {
     id: "digital-2",
     title: "Xbox Game Pass Ultimate (3 Months)",
-    description: "Get unlimited access to over 100 high-quality games on console, PC, and cloud.",
+    description:
+      "Get unlimited access to over 100 high-quality games on console, PC, and cloud.",
     image: "/images/subscription/xboxpass3.jpg",
     price: 44.99,
     discount: 30,
@@ -373,7 +382,8 @@ export const mockProducts = [
   {
     id: "digital-4",
     title: "Spotify Premium (12 Months)",
-    description: "Ad-free music listening, offline playback, and on-demand playback.",
+    description:
+      "Ad-free music listening, offline playback, and on-demand playback.",
     image: "/images/subscription/spotify12.jpg",
     price: 99.99,
     discount: 15,
@@ -395,7 +405,8 @@ export const mockProducts = [
   {
     id: "digital-5",
     title: "Netflix Gift Card $50",
-    description: "Give the gift of unlimited entertainment with a Netflix gift card.",
+    description:
+      "Give the gift of unlimited entertainment with a Netflix gift card.",
     image: "/images/subscription/netflix50.jpg",
     price: 50.0,
     discount: 0,
@@ -417,7 +428,8 @@ export const mockProducts = [
   {
     id: "digital-6",
     title: "Roblox Gift Card $25",
-    description: "Get Robux to purchase avatars, accessories, and more in Roblox.",
+    description:
+      "Get Robux to purchase avatars, accessories, and more in Roblox.",
     image: "/images/subscription/roblox25.jpg",
     price: 25.0,
     discount: 0,
@@ -440,7 +452,8 @@ export const mockProducts = [
   {
     id: "game-11",
     title: "God of War Ragnarök",
-    description: "Embark on a mythic journey for answers and allies before Ragnarök arrives.",
+    description:
+      "Embark on a mythic journey for answers and allies before Ragnarök arrives.",
     image: "/images/gowragnarok/gowragnarok.jpg",
     price: 69.99,
     discount: 15,
@@ -462,7 +475,8 @@ export const mockProducts = [
   {
     id: "game-12",
     title: "Horizon Forbidden West",
-    description: "Join Aloy as she braves the Forbidden West, a deadly frontier that conceals mysterious new threats.",
+    description:
+      "Join Aloy as she braves the Forbidden West, a deadly frontier that conceals mysterious new threats.",
     image: "/images/horizon/horizon.jpg",
     price: 59.99,
     discount: 25,
@@ -485,7 +499,8 @@ export const mockProducts = [
   {
     id: "game-13",
     title: "Forza Horizon 5",
-    description: "Your Ultimate Horizon Adventure awaits! Explore the vibrant open world landscapes of Mexico.",
+    description:
+      "Your Ultimate Horizon Adventure awaits! Explore the vibrant open world landscapes of Mexico.",
     image: "/images/forza/forza5.jpg",
     price: 59.99,
     discount: 30,
@@ -530,7 +545,8 @@ export const mockProducts = [
   {
     id: "game-15",
     title: "Final Fantasy XVI",
-    description: "The latest installment in the legendary RPG series, featuring a dark fantasy setting.",
+    description:
+      "The latest installment in the legendary RPG series, featuring a dark fantasy setting.",
     image: "/images/ffxvi/finalfantasy.jpg",
     price: 69.99,
     discount: 0,
@@ -565,12 +581,18 @@ export const mockProducts = [
     rating: 4.8,
     sales: 1500000,
     features: ["Vector Design", "No Subscription", "Professional Tools"],
-    images: ["/images/software/affinitydesigner2.jpg", "/affinitydesigner2.jpg", "/affinitydesigner2.jpg", "/affinitydesigner2.jpg"],
+    images: [
+      "/images/software/affinitydesigner2.jpg",
+      "/affinitydesigner2.jpg",
+      "/affinitydesigner2.jpg",
+      "/affinitydesigner2.jpg",
+    ],
   },
   {
     id: "software-8",
     title: "DaVinci Resolve Studio",
-    description: "Professional video editing, color correction, visual effects, and audio post-production.",
+    description:
+      "Professional video editing, color correction, visual effects, and audio post-production.",
     image: "/images/software/davinciresolve.jpg",
     price: 295.0,
     discount: 0,
@@ -627,14 +649,20 @@ export const mockProducts = [
     rating: 4.9,
     sales: 50000000,
     features: ["Instant Delivery", "No Expiration", "Global Usage"],
-    images: ["/images/subscription/amazon100.jpg", "/amazon100.jpg", "/amazon100.jpg", "/amazon100.jpg"],
+    images: [
+      "/images/subscription/amazon100.jpg",
+      "/amazon100.jpg",
+      "/amazon100.jpg",
+      "/amazon100.jpg",
+    ],
   },
-   
+
   // Adding more products to test pagination (at least 60 total products)
   {
     id: "game-16",
     title: "Assassin's Creed Valhalla",
-    description: "Become a legendary Viking warrior raised on tales of battle and glory.",
+    description:
+      "Become a legendary Viking warrior raised on tales of battle and glory.",
     image: "/images/acvalhalla/acvalhalla.jpg",
     price: 59.99,
     discount: 40,
@@ -680,7 +708,8 @@ export const mockProducts = [
   {
     id: "game-18",
     title: "Minecraft",
-    description: "A sandbox game that allows players to build and explore virtual worlds made up of blocks.",
+    description:
+      "A sandbox game that allows players to build and explore virtual worlds made up of blocks.",
     image: "/images/minecraft/minecraft1.jpg",
     price: 29.99,
     discount: 0,
@@ -702,7 +731,8 @@ export const mockProducts = [
   {
     id: "game-19",
     title: "Grand Theft Auto V",
-    description: "An action-adventure game set in the fictional state of San Andreas.",
+    description:
+      "An action-adventure game set in the fictional state of San Andreas.",
     image: "/images/gtav/gtav1.jpg",
     price: 29.99,
     discount: 50,
@@ -719,7 +749,6 @@ export const mockProducts = [
       "/images/gtav/gtav2.jpg",
       "/images/gtav/gtav3.jpg",
       "/images/gtav/gtav4.jpg",
-
     ],
   },
   {
@@ -747,7 +776,8 @@ export const mockProducts = [
   {
     id: "game-21",
     title: "Stardew Valley",
-    description: "A farming simulation game where you build and manage your own farm.",
+    description:
+      "A farming simulation game where you build and manage your own farm.",
     image: "/images/stardew/stardewvalley.jpg",
     price: 14.99,
     discount: 25,
@@ -768,7 +798,8 @@ export const mockProducts = [
   {
     id: "game-22",
     title: "Among Us",
-    description: "A party game of teamwork and betrayal for 4-15 players in space.",
+    description:
+      "A party game of teamwork and betrayal for 4-15 players in space.",
     image: "/images/amongus/amogus1.jpg",
     price: 4.99,
     discount: 0,
@@ -785,13 +816,13 @@ export const mockProducts = [
       "/images/amongus/amogus2.jpg",
       "/images/amongus/amogus3.jpg",
       "/images/amongus/amogus4.jpg",
-
     ],
   },
   {
     id: "game-23",
     title: "Valorant",
-    description: "A 5v5 character-based tactical FPS where precise gunplay meets unique agent abilities.",
+    description:
+      "A 5v5 character-based tactical FPS where precise gunplay meets unique agent abilities.",
     image: "/images/valo/valo1.jpg",
     price: 0,
     discount: 0,
@@ -813,7 +844,8 @@ export const mockProducts = [
   {
     id: "game-24",
     title: "Sekiro: Shadows Die Twice",
-    description: "An action-adventure game set in a reimagined late 16th century Japan.",
+    description:
+      "An action-adventure game set in a reimagined late 16th century Japan.",
     image: "/images/sekirosdt/sekirosdt1.jpg",
     price: 59.99,
     discount: 35,
@@ -835,7 +867,8 @@ export const mockProducts = [
   {
     id: "game-25",
     title: "Death Stranding",
-    description: "An action game set in an apocalyptic United States, where you play as a courier delivering packages.",
+    description:
+      "An action game set in an apocalyptic United States, where you play as a courier delivering packages.",
     image: "/images/deathstranding/deathstranding1.jpg",
     price: 39.99,
     discount: 50,
@@ -857,7 +890,8 @@ export const mockProducts = [
   {
     id: "software-9",
     title: "Ableton Live 11",
-    description: "Professional music production software for composing, recording, mixing, and mastering.",
+    description:
+      "Professional music production software for composing, recording, mixing, and mastering.",
     image: "/images/software/abletonlive11.jpg",
     price: 449.0,
     discount: 10,
@@ -901,7 +935,8 @@ export const mockProducts = [
   {
     id: "software-11",
     title: "Sketch",
-    description: "Vector graphics editor for macOS used primarily for user interface and user experience design.",
+    description:
+      "Vector graphics editor for macOS used primarily for user interface and user experience design.",
     image: "/images/software/sketch.jpg",
     price: 99.0,
     discount: 20,
@@ -923,7 +958,8 @@ export const mockProducts = [
   {
     id: "software-12",
     title: "Unity Pro",
-    description: "A powerful development platform for creating 2D and 3D games and interactive experiences.",
+    description:
+      "A powerful development platform for creating 2D and 3D games and interactive experiences.",
     image: "/images/software/unitypro.jpg",
     price: 1800.0,
     discount: 15,
@@ -956,7 +992,11 @@ export const mockProducts = [
     genres: ["Virtualization", "Productivity"],
     rating: 4.5,
     sales: 3000000,
-    features: ["Windows on Mac", "Seamless Integration", "Performance Optimization"],
+    features: [
+      "Windows on Mac",
+      "Seamless Integration",
+      "Performance Optimization",
+    ],
     images: [
       "/placeholder.svg?height=300&width=300&text=Parallels",
       "/placeholder.svg?height=300&width=300&text=Parallels",
@@ -967,7 +1007,8 @@ export const mockProducts = [
   {
     id: "digital-9",
     title: "Apple Gift Card $50",
-    description: "Use for apps, games, music, movies, TV shows, iCloud, and more.",
+    description:
+      "Use for apps, games, music, movies, TV shows, iCloud, and more.",
     image: "/images/subscription/apple50.jpg",
     price: 50.0,
     discount: 0,
@@ -1011,7 +1052,8 @@ export const mockProducts = [
   {
     id: "digital-11",
     title: "Nintendo eShop Card $50",
-    description: "Add funds to your Nintendo eShop account to purchase games and DLC.",
+    description:
+      "Add funds to your Nintendo eShop account to purchase games and DLC.",
     image: "/images/subscription/nintendo50.jpg",
     price: 50.0,
     discount: 0,
@@ -1055,7 +1097,8 @@ export const mockProducts = [
   {
     id: "game-26",
     title: "Diablo IV",
-    description: "The newest installment in the Diablo series, featuring a dark, gothic world.",
+    description:
+      "The newest installment in the Diablo series, featuring a dark, gothic world.",
     image: "/images/diabloiv/diabloiv1.jpg",
     price: 69.99,
     discount: 0,
@@ -1077,7 +1120,8 @@ export const mockProducts = [
   {
     id: "game-27",
     title: "Hogwarts Legacy",
-    description: "An immersive, open-world action RPG set in the world of Harry Potter.",
+    description:
+      "An immersive, open-world action RPG set in the world of Harry Potter.",
     image: "/images/hogwarts/hogwart1.jpg",
     price: 59.99,
     discount: 15,
@@ -1142,7 +1186,8 @@ export const mockProducts = [
   {
     id: "game-30",
     title: "The Legend of Zelda: Tears of the Kingdom",
-    description: "The sequel to Breath of the Wild, featuring a vast open world and new abilities.",
+    description:
+      "The sequel to Breath of the Wild, featuring a vast open world and new abilities.",
     image: "/images/zeldatok/zeldatok1.jpg",
     price: 69.99,
     discount: 10,
@@ -1206,7 +1251,8 @@ export const mockProducts = [
   {
     id: "digital-13",
     title: "Hulu (No Ads) 12 Months",
-    description: "Stream thousands of shows and movies without ad interruptions.",
+    description:
+      "Stream thousands of shows and movies without ad interruptions.",
     image: "/images/subscription/hulu.jpg",
     price: 143.88,
     discount: 20,
@@ -1228,7 +1274,8 @@ export const mockProducts = [
   {
     id: "digital-14",
     title: "Canva Pro (12 Months)",
-    description: "Create professional designs with premium features and content.",
+    description:
+      "Create professional designs with premium features and content.",
     image: "/images/subscription/canvapro.jpg",
     price: 119.99,
     discount: 25,
@@ -1269,7 +1316,7 @@ export const mockProducts = [
       "/placeholder.svg?height=300&width=300&text=Grammarly",
     ],
   },
-]
+];
 
 // Mock publisher data
 export const mockPublishers = [
@@ -1282,7 +1329,13 @@ export const mockPublishers = [
     founded: "1982",
     headquarters: "Redwood City, California, USA",
     website: "https://www.ea.com",
-    products: ["FIFA", "Battlefield", "The Sims", "Apex Legends", "Mass Effect"],
+    products: [
+      "FIFA",
+      "Battlefield",
+      "The Sims",
+      "Apex Legends",
+      "Mass Effect",
+    ],
     featuredProducts: [
       {
         id: "game-4",
@@ -1369,7 +1422,13 @@ export const mockPublishers = [
     founded: "1982",
     headquarters: "San Jose, California, USA",
     website: "https://www.adobe.com",
-    products: ["Photoshop", "Illustrator", "Premiere Pro", "After Effects", "Acrobat"],
+    products: [
+      "Photoshop",
+      "Illustrator",
+      "Premiere Pro",
+      "After Effects",
+      "Acrobat",
+    ],
     featuredProducts: [
       {
         id: "software-2",
@@ -1406,7 +1465,13 @@ export const mockPublishers = [
     founded: "1993",
     headquarters: "San Mateo, California, USA",
     website: "https://www.sie.com",
-    products: ["PlayStation", "God of War", "Horizon", "The Last of Us", "Uncharted"],
+    products: [
+      "PlayStation",
+      "God of War",
+      "Horizon",
+      "The Last of Us",
+      "Uncharted",
+    ],
     featuredProducts: [
       {
         id: "game-11",
@@ -1437,7 +1502,13 @@ export const mockPublishers = [
     founded: "2003",
     headquarters: "Tokyo, Japan",
     website: "https://www.square-enix.com",
-    products: ["Final Fantasy", "Dragon Quest", "Kingdom Hearts", "Tomb Raider", "Nier"],
+    products: [
+      "Final Fantasy",
+      "Dragon Quest",
+      "Kingdom Hearts",
+      "Tomb Raider",
+      "Nier",
+    ],
     featuredProducts: [
       {
         id: "game-15",
@@ -1456,7 +1527,13 @@ export const mockPublishers = [
     founded: "1979",
     headquarters: "Osaka, Japan",
     website: "https://www.capcom.com",
-    products: ["Resident Evil", "Monster Hunter", "Street Fighter", "Devil May Cry", "Mega Man"],
+    products: [
+      "Resident Evil",
+      "Monster Hunter",
+      "Street Fighter",
+      "Devil May Cry",
+      "Mega Man",
+    ],
     featuredProducts: [
       {
         id: "game-14",
@@ -1485,7 +1562,7 @@ export const mockPublishers = [
       },
     ],
   },
-]
+];
 
 // Mock user data
 export const mockUsers = [
@@ -1566,4 +1643,4 @@ export const mockUsers = [
       darkMode: true,
     },
   },
-]
+];
