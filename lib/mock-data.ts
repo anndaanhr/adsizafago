@@ -1054,7 +1054,7 @@ export const mockProducts = [
     title: "Nintendo eShop Card $50",
     description:
       "Add funds to your Nintendo eShop account to purchase games and DLC.",
-    image: "/images/subscription/nintendo50.jpg",
+    image: "/images/subscription/nintento50.jpg",
     price: 50.0,
     discount: 0,
     platform: "Nintendo",
