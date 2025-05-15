@@ -755,7 +755,7 @@ export const mockProducts = [
     id: "game-20",
     title: "The Last of Us Part II",
     description: "A story of revenge set in a post-apocalyptic United States.",
-    image: "/images/tlou2/tlou1.jpg",
+    image: "/images/tlou2/tlou21.jpg",
     price: 59.99,
     discount: 30,
     platform: "PlayStation",
@@ -767,10 +767,10 @@ export const mockProducts = [
     sales: 10000000,
     features: ["Story Rich", "Action", "Emotional"],
     images: [
-      "/images/tlou2/tlou1.jpg",
-      "/images/tlou2/tlou2.jpg",
-      "/images/tlou2/tlou3.jpg",
-      "/images/tlou2/tlou4.jpg",
+      "/images/tlou2/tlou21.jpg",
+      "/images/tlou2/tlou22.jpg",
+      "/images/tlou2/tlou23.jpg",
+      "/images/tlou2/tlou24.jpg",
     ],
   },
   {
