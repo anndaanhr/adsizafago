@@ -982,7 +982,7 @@ export const mockProducts = [
     id: "software-13",
     title: "Parallels Desktop",
     description: "Run Windows applications on your Mac without rebooting.",
-    image: "/placeholder.svg?height=300&width=300&text=Parallels",
+    image: "/images/software/paraleldesktop18.jpg",
     price: 79.99,
     discount: 20,
     platform: "Mac",
