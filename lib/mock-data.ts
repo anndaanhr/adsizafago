@@ -663,7 +663,7 @@ export const mockProducts = [
     title: "Assassin's Creed Valhalla",
     description:
       "Become a legendary Viking warrior raised on tales of battle and glory.",
-    image: "/images/acvalhalla/acvalhalla.jpg",
+    image: "/images/acvalhalla/acvalhalla1.jpg",
     price: 59.99,
     discount: 40,
     platform: "Multiple",
