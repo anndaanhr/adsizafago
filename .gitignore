@@ -10,7 +10,7 @@
 # production
 /build
 
-# debug
+# deb
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
@@ -19,7 +19,7 @@ yarn-error.log*
 # env files
 .env*
 
-# vercel
+# ver
 .vercel
 
 # typescript
